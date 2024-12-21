@@ -1,0 +1,56 @@
+---
+title: "Example: Combined in Quarto"
+author: "Andriy Koval"
+format:
+  html:
+    page-layout: full
+    toc: true
+    toc-location: right
+    code-fold: show
+    theme: simplex
+    highlight-style: github
+    colde-line-numbers: true
+    css: styles.css
+    self-contained: true
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+This report examines rankings of Ukrainian universities in 2024 as reported by ... . 
+
+# Data
+
+We extract data from the [online page](https://euroosvita.net/index.php/?category=49&id=8251) of university rankings. 
+
+```{r}
+#| warning=F
+library(tidyverse)
+library(rvest)
+
+# Specify the URL of the webpage
+url <- "https://euroosvita.net/index.php/?category=49&id=8251"
+
+# Read the HTML content of the webpage
+webpage <- read_html(url)
+
+# Extract the table(s) from the HTML content
+tables <- html_table(webpage, fill = TRUE)
+
+# Access the desired table (may not be the first one)
+ds0 <- tables[[5]]
+```
+
+
+
+```{r}
+#| label: tweak-data-1
+#| code-summary: Wrangle data
+
+ds1 <- 
+  ds0 %>% 
+  slice(2:nrow(ds0))
+  
+ds1 %>% glimpse()
+```
+
