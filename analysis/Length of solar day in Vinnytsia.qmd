@@ -1,0 +1,54 @@
+---
+title: "Length of solar day in Vinnytsia"
+format: html
+editor: visual
+---
+
+```{r}
+#| label: tweak-data-1
+#| code-summary: Wrangle datas
+#| warning=F
+library(tidyverse)
+library(rvest)
+library(dplyr) 
+library(ggplot2)
+
+# ---- December -----------------------------------------------------
+url_dec <- "https://www.timeanddate.com/sun/ukraine/vinnytsia"
+webpage_dec <- read_html(url_dec)
+tables_dec <- html_table(webpage_dec, fill = TRUE)
+ds0_dec <- tables_dec[[2]]
+
+ds_daylength_dec <- ds0_dec %>% select(4)
+ds_daylength_dec <- ds_daylength_dec[-nrow(ds_daylength_dec),]
+ds_daylength_dec <- ds_daylength_dec[-c(1, 2), ]
+
+#ds_daylength <- ds_daylength[-((nrow(ds_daylength)-1):nrow(ds_daylength)), ] to remove a several rows 
+
+ds_number_dec <- ds0_dec %>% select(1)
+ds_number_dec <- ds_number_dec[-nrow(ds_number_dec),]
+ds_number_dec <- ds_number_dec[-c(1, 2), ]
+
+ds_combined_december <- cbind(ds_number_dec, ds_daylength_dec)
+
+print(ds_combined_december)
+# ---- November -----------------------------------------------------
+url_nov <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=11&year=2024"
+
+webpage_nov <- read_html(url_nov)
+tables_nov <- html_table(webpage_nov, fill = TRUE)
+ds0_nov <- tables_nov[[2]]
+
+ds_daylength_nov <- ds0_nov %>% select(4)
+ds_daylength_nov <- ds_daylength_nov[-nrow(ds_daylength_nov),]
+ds_daylength_nov <- ds_daylength_nov[-c(1, 2), ]
+
+ds_number_nov <- ds0_nov %>% select(1)
+ds_number_nov <- ds_number_nov[-c(1, 2), ]
+ds_number_nov <- ds_number_nov[-nrow(ds_number_nov),]
+
+ds_combined_november <- cbind(ds_number_nov, ds_daylength_nov)
+
+print(ds_combined_november)
+```
+
