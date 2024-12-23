@@ -29,9 +29,12 @@ ds_number_dec <- ds0_dec %>% select(1)
 ds_number_dec <- ds_number_dec[-nrow(ds_number_dec),]
 ds_number_dec <- ds_number_dec[-c(1, 2), ]
 
-ds_combined_december <- cbind(ds_number_dec, ds_daylength_dec)
+new_row_december <- data.frame(Year = "1", Daylength = "8:30:06")
 
-print(ds_combined_december)
+ds_combined_december <- cbind(ds_number_dec, ds_daylength_dec)
+colnames(ds_combined_december) <- c("Year", "Daylength")
+december <- rbind(new_row_december, ds_combined_december)
+print(december)
 # ---- November -----------------------------------------------------
 url_nov <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=11&year=2024"
 
@@ -47,8 +50,196 @@ ds_number_nov <- ds0_nov %>% select(1)
 ds_number_nov <- ds_number_nov[-c(1, 2), ]
 ds_number_nov <- ds_number_nov[-nrow(ds_number_nov),]
 
+new_row_november <- data.frame(Year = "1", Daylength = "9:49:51")
+
+
 ds_combined_november <- cbind(ds_number_nov, ds_daylength_nov)
+colnames(ds_combined_november) <- c("Year", "Daylength")
+november <- rbind(new_row_november, ds_combined_november)
+print(november)
+# ---- October -----------------------------------------------------
+url_oct <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=10&year=2024"
+webpage_oct <- read_html(url_oct)
+tables_oct <- html_table(webpage_oct, fill = TRUE)
+ds0_oct <- tables_oct[[2]]
 
-print(ds_combined_november)
+
+ds_daylength_oct <- ds0_oct %>% select(4)
+ds_daylength_oct <- ds_daylength_oct[-nrow(ds_daylength_oct),]
+ds_daylength_oct <- ds_daylength_oct[-c(1, 2, 28), ]
+
+ds_number_oct <- ds0_oct %>% select(1)
+ds_number_oct <- ds_number_oct[-c(1, 2, 28), ]
+ds_number_oct <- ds_number_oct[-nrow(ds_number_oct),]
+
+new_row_october <- data.frame(Year = "1", Daylength = "11:37:55")
+
+ds_combined_october <- cbind(ds_number_oct, ds_daylength_oct)
+colnames(ds_combined_october) <- c("Year", "Daylength")
+october <- rbind(new_row_october, ds_combined_october)
+
+
+print(october)
+
+
+# ---- September ----------------------------------------------------
+url_sep <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=9&year=2024"
+webpage_sep <- read_html(url_sep)
+tables_sep <- html_table(webpage_sep, fill = TRUE)
+ds0_sep <- tables_sep[[2]]
+
+ds_daylength_sep <- ds0_sep %>% select(4)
+ds_daylength_sep <- ds_daylength_sep[-nrow(ds_daylength_sep),]
+ds_daylength_sep <- ds_daylength_sep[-c(1, 2), ]
+
+ds_number_sep <- ds0_sep %>% select(1)
+ds_number_sep <- ds_number_sep[-c(1, 2), ]
+ds_number_sep <- ds_number_sep[-nrow(ds_number_sep),]
+
+ds_combined_september <- cbind(ds_number_sep, ds_daylength_sep)
+
+print(ds_combined_september)
+
+# ---- August -----------------------------------------------------
+url_aug <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=8&year=2024"
+webpage_aug <- read_html(url_aug)
+tables_aug <- html_table(webpage_aug, fill = TRUE)
+ds0_aug <- tables_aug[[2]]
+
+ds_daylength_aug <- ds0_aug %>% select(4)
+ds_daylength_aug <- ds_daylength_aug[-nrow(ds_daylength_aug),]
+ds_daylength_aug <- ds_daylength_aug[-c(1, 2), ]
+
+ds_number_aug <- ds0_aug %>% select(1)
+ds_number_aug <- ds_number_aug[-c(1, 2), ]
+ds_number_aug <- ds_number_aug[-nrow(ds_number_aug),]
+
+ds_combined_august <- cbind(ds_number_aug, ds_daylength_aug)
+
+print(ds_combined_august)
+# ---- July -----------------------------------------------------
+url_jul <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=7&year=2024"
+webpage_jul <- read_html(url_jul)
+tables_jul <- html_table(webpage_jul, fill = TRUE)
+ds0_jul <- tables_jul[[2]]
+
+ds_daylength_jul <- ds0_jul %>% select(4)
+ds_daylength_jul <- ds_daylength_jul[-nrow(ds_daylength_jul),]
+ds_daylength_jul <- ds_daylength_jul[-c(1, 2), ]
+
+ds_number_jul <- ds0_jul %>% select(1)
+ds_number_jul <- ds_number_jul[-c(1, 2), ]
+ds_number_jul <- ds_number_jul[-nrow(ds_number_jul),]
+
+ds_combined_july <- cbind(ds_number_jul, ds_daylength_jul)
+
+print(ds_combined_july)
+# ---- June -----------------------------------------------------
+url_jun <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=6&year=2024"
+webpage_jun <- read_html(url_jun)
+tables_jun <- html_table(webpage_jun, fill = TRUE)
+ds0_jun <- tables_jun[[2]]
+
+ds_daylength_jun <- ds0_jun %>% select(4)
+ds_daylength_jun <- ds_daylength_jun[-nrow(ds_daylength_jun),]
+ds_daylength_jun <- ds_daylength_jun[-c(1, 2), ]
+
+ds_number_jun <- ds0_jun %>% select(1)
+ds_number_jun <- ds_number_jun[-c(1, 2), ]
+ds_number_jun <- ds_number_jun[-nrow(ds_number_jun),]
+
+ds_combined_june <- cbind(ds_number_jun, ds_daylength_jun)
+
+print(ds_combined_june)
+# ---- May -----------------------------------------------------
+url_may <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=5&year=2024"
+webpage_may <- read_html(url_may)
+tables_may <- html_table(webpage_may, fill = TRUE)
+ds0_may <- tables_may[[2]]
+
+ds_daylength_may <- ds0_may %>% select(4)
+ds_daylength_may <- ds_daylength_may[-nrow(ds_daylength_may),]
+ds_daylength_may <- ds_daylength_may[-c(1, 2), ]
+
+ds_number_may <- ds0_may %>% select(1)
+ds_number_may <- ds_number_may[-c(1, 2), ]
+ds_number_may <- ds_number_may[-nrow(ds_number_may),]
+
+ds_combined_may <- cbind(ds_number_may, ds_daylength_may)
+
+print(ds_combined_may)
+# ---- April -----------------------------------------------------
+url_apr <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=4&year=2024"
+webpage_apr <- read_html(url_apr)
+tables_apr <- html_table(webpage_apr, fill = TRUE)
+ds0_apr <- tables_apr[[2]]
+
+ds_daylength_apr <- ds0_apr %>% select(4)
+ds_daylength_apr <- ds_daylength_apr[-nrow(ds_daylength_apr),]
+ds_daylength_apr <- ds_daylength_apr[-c(1, 2), ]
+
+ds_number_apr <- ds0_apr %>% select(1)
+ds_number_apr <- ds_number_apr[-c(1, 2), ]
+ds_number_apr <- ds_number_apr[-nrow(ds_number_apr),]
+
+ds_combined_april <- cbind(ds_number_apr, ds_daylength_apr)
+
+print(ds_combined_april)
+
+# ---- March -----------------------------------------------------
+url_mar <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=3&year=2024"
+webpage_mar <- read_html(url_mar)
+tables_mar <- html_table(webpage_mar, fill = TRUE)
+ds0_mar <- tables_mar[[2]]
+
+ds_daylength_mar <- ds0_mar %>% select(4)
+ds_daylength_mar <- ds_daylength_mar[-nrow(ds_daylength_mar),]
+ds_daylength_mar <- ds_daylength_mar[-c(1, 2, 32), ]
+
+ds_number_mar <- ds0_mar %>% select(1)
+ds_number_mar <- ds_number_mar[-c(1, 2, 32), ]
+ds_number_mar <- ds_number_mar[-nrow(ds_number_mar),]
+
+ds_combined_march <- cbind(ds_number_mar, ds_daylength_mar)
+
+print(ds_combined_march)
+# ---- February ----------------------------------------------------
+url_feb <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=2&year=20242"
+webpage_feb <- read_html(url_feb)
+tables_feb <- html_table(webpage_feb, fill = TRUE)
+ds0_feb <- tables_feb[[2]]
+
+ds_daylength_feb <- ds0_feb %>% select(4)
+ds_daylength_feb <- ds_daylength_feb[-nrow(ds_daylength_feb),]
+ds_daylength_feb <- ds_daylength_feb[-c(1, 2), ]
+
+ds_number_feb <- ds0_feb %>% select(1)
+ds_number_feb <- ds_number_feb[-c(1, 2), ]
+ds_number_feb <- ds_number_feb[-nrow(ds_number_feb),]
+
+ds_combined_february <- cbind(ds_number_feb, ds_daylength_feb)
+
+print(ds_combined_february)
+# ---- January ----------------------------------------------------
+url_january <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=1&year=2024"
+webpage_january <- read_html(url_january)
+tables_january <- html_table(webpage_january, fill = TRUE)
+ds0_january <- tables_january[[2]]
+
+ds_daylength_january <- ds0_january %>% select(4)
+ds_daylength_january <- ds_daylength_january[-nrow(ds_daylength_january),]
+ds_daylength_january <- ds_daylength_january[-c(1, 2), ]
+
+ds_number_january <- ds0_january %>% select(1)
+ds_number_january <- ds_number_january[-c(1, 2), ]
+ds_number_january <- ds_number_january[-nrow(ds_number_january),]
+
+ds_combined_january <- cbind(ds_number_january, ds_daylength_january)
+
+print(ds_combined_january)
+
+# ---- Graph ----------------------------------------------------
+#ds_combined_year <- rbind(ds_combined_january, ds_combined_february,ds_combined_march, ds_combined_april,ds_combined_may, ds_combined_june, ds_combined_july, ds_combined_august, ds_combined_september, ds_combined_october, ds_combined_november, ds_combined_december)
+
+#print(ds_combined_year)
 ```
-
