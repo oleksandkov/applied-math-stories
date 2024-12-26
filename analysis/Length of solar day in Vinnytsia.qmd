@@ -72,9 +72,9 @@ ds_number_oct <- ds0_oct %>% select(1)
 ds_number_oct <- ds_number_oct[-c(1, 2, 28), ]
 ds_number_oct <- ds_number_oct[-nrow(ds_number_oct),]
 
-new_row_october <- data.frame(Year = "1", Daylength = "11:37:55")
-
 ds_combined_october <- cbind(ds_number_oct, ds_daylength_oct)
+
+new_row_october <- data.frame(Year = "1", Daylength = "11:37:55")
 colnames(ds_combined_october) <- c("Year", "Daylength")
 october <- rbind(new_row_october, ds_combined_october)
 
@@ -98,7 +98,11 @@ ds_number_sep <- ds_number_sep[-nrow(ds_number_sep),]
 
 ds_combined_september <- cbind(ds_number_sep, ds_daylength_sep)
 
-print(ds_combined_september)
+new_row_sep <- data.frame(Year = "1", Daylength = "13:25:29")
+colnames(ds_combined_september) <- c("Year", "Daylength")
+september <- rbind(new_row_sep, ds_combined_september)
+
+print(september)
 
 # ---- August -----------------------------------------------------
 url_aug <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=8&year=2024"
@@ -114,9 +118,17 @@ ds_number_aug <- ds0_aug %>% select(1)
 ds_number_aug <- ds_number_aug[-c(1, 2), ]
 ds_number_aug <- ds_number_aug[-nrow(ds_number_aug),]
 
+
 ds_combined_august <- cbind(ds_number_aug, ds_daylength_aug)
 
-print(ds_combined_august)
+new_row_aug <- data.frame(Year = "1", Daylength = "15:06:45")
+colnames(ds_combined_august) <- c("Year", "Daylength")
+august <- rbind(new_row_aug, ds_combined_august)
+#new_row_ <- data.frame(Year = "1", Daylength = "")
+#colnames(ds_combined_) <- c("Year", "Daylength")
+#<- rbind(new_row_, ds_combined_)
+
+print(august)
 # ---- July -----------------------------------------------------
 url_jul <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=7&year=2024"
 webpage_jul <- read_html(url_jul)
@@ -133,7 +145,11 @@ ds_number_jul <- ds_number_jul[-nrow(ds_number_jul),]
 
 ds_combined_july <- cbind(ds_number_jul, ds_daylength_jul)
 
-print(ds_combined_july)
+new_row_jul <- data.frame(Year = "1", Daylength = "16:09:32")
+colnames(ds_combined_july) <- c("Year", "Daylength")
+july <- rbind(new_row_jul, ds_combined_july)
+
+print(july)
 # ---- June -----------------------------------------------------
 url_jun <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=6&year=2024"
 webpage_jun <- read_html(url_jun)
@@ -150,7 +166,11 @@ ds_number_jun <- ds_number_jun[-nrow(ds_number_jun),]
 
 ds_combined_june <- cbind(ds_number_jun, ds_daylength_jun)
 
-print(ds_combined_june)
+new_row_jun <- data.frame(Year = "1", Daylength = "15:57:57")
+colnames(ds_combined_june) <- c("Year", "Daylength")
+june <- rbind(new_row_jun, ds_combined_june)
+
+print(june)
 # ---- May -----------------------------------------------------
 url_may <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=5&year=2024"
 webpage_may <- read_html(url_may)
@@ -167,7 +187,11 @@ ds_number_may <- ds_number_may[-nrow(ds_number_may),]
 
 ds_combined_may <- cbind(ds_number_may, ds_daylength_may)
 
-print(ds_combined_may)
+new_row_may <- data.frame(Year = "1", Daylength = "14:38:56")
+colnames(ds_combined_may) <- c("Year", "Daylength")
+may <- rbind(new_row_may, ds_combined_may)
+
+print(may)
 # ---- April -----------------------------------------------------
 url_apr <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=4&year=2024"
 webpage_apr <- read_html(url_apr)
@@ -184,7 +208,11 @@ ds_number_apr <- ds_number_apr[-nrow(ds_number_apr),]
 
 ds_combined_april <- cbind(ds_number_apr, ds_daylength_apr)
 
-print(ds_combined_april)
+new_row_apr <- data.frame(Year = "1", Daylength = "12:54:55")
+colnames(ds_combined_april) <- c("Year", "Daylength")
+april <- rbind(new_row_apr, ds_combined_april)
+
+print(april)
 
 # ---- March -----------------------------------------------------
 url_mar <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=3&year=2024"
@@ -202,7 +230,12 @@ ds_number_mar <- ds_number_mar[-nrow(ds_number_mar),]
 
 ds_combined_march <- cbind(ds_number_mar, ds_daylength_mar)
 
-print(ds_combined_march)
+new_row_mar <- data.frame(Year = "1", Daylength = "11:01:45")
+colnames(ds_combined_march) <- c("Year", "Daylength")
+march <- rbind(new_row_mar, ds_combined_march)
+
+
+print(march)
 # ---- February ----------------------------------------------------
 url_feb <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=2&year=20242"
 webpage_feb <- read_html(url_feb)
@@ -219,7 +252,11 @@ ds_number_feb <- ds_number_feb[-nrow(ds_number_feb),]
 
 ds_combined_february <- cbind(ds_number_feb, ds_daylength_feb)
 
-print(ds_combined_february)
+new_row_feb <- data.frame(Year = "1", Daylength = "9:23:18")
+colnames(ds_combined_february) <- c("Year", "Daylength")
+february <- rbind(new_row_feb, ds_combined_february)
+
+print(february)
 # ---- January ----------------------------------------------------
 url_january <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=1&year=2024"
 webpage_january <- read_html(url_january)
@@ -236,10 +273,142 @@ ds_number_january <- ds_number_january[-nrow(ds_number_january),]
 
 ds_combined_january <- cbind(ds_number_january, ds_daylength_january)
 
-print(ds_combined_january)
+new_row_january <- data.frame(Year = "1", Daylength = "8:16:33")
+colnames(ds_combined_january) <- c("Year", "Daylength")
+january <- rbind(new_row_january, ds_combined_january)
+
+print(january)
 
 # ---- Graph ----------------------------------------------------
-#ds_combined_year <- rbind(ds_combined_january, ds_combined_february,ds_combined_march, ds_combined_april,ds_combined_may, ds_combined_june, ds_combined_july, ds_combined_august, ds_combined_september, ds_combined_october, ds_combined_november, ds_combined_december)
+year <- rbind(january, february,march, april,may, june, july, august, september, october, november, december)
 
-#print(ds_combined_year)
+print(year)
+```
+
+```{r}
+#| label: tweak-data-1
+#| code-summary: Wrangle datas
+#| warning=F
+library(tidyverse)
+library(rvest)
+library(dplyr) 
+library(ggplot2)
+
+time_to_hours <- function(time) {
+  parts <- str_split(time, ":")[[1]]
+  as.numeric(parts[1]) + as.numeric(parts[2]) / 60 + as.numeric(parts[3]) / 3600
+} 
+
+
+year$Daylength_numeric <- sapply(year$Daylength, time_to_hours)
+year$Year <- as.numeric(year$Year)
+
+
+august$Daylength_numeric <- sapply(august$Daylength, time_to_hours)
+august$Year <- as.numeric(august$Year)
+
+ggplot(data = august, aes(x = Year, y = Daylength_numeric)) +
+  geom_line(color = "green", size = 1) +
+  geom_point(color = "orange", size = 2) +
+  labs(
+    title = "Day Length Trend for August",
+    x = "Day of August",
+    y = "Day Length (Hours)"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+#| label: tweak-data-1
+#| code-summary: Wrangle datas
+#| warning=F
+library(tidyverse)
+library(rvest)
+library(dplyr) 
+library(ggplot2)
+
+add_day_of_year <- function(data, start_day) {
+  data <- data %>% mutate(Day_of_Year = start_day:(start_day + nrow(data) - 1))
+  return(data)
+}
+
+convert_to_character <- function(data) {
+  data <- data %>% mutate(Year = as.character(Year))
+  return(data)
+}
+
+january <- add_day_of_year(january, 1)
+february <- add_day_of_year(february, 32)  
+march <- add_day_of_year(march, 60) 
+april <- add_day_of_year(april, 91)
+may <- add_day_of_year(may, 121)
+june <- add_day_of_year(june, 152)
+july <- add_day_of_year(july, 182)
+august <- add_day_of_year(august, 213)
+september <- add_day_of_year(september, 244)
+october <- add_day_of_year(october, 274)
+november <- add_day_of_year(november, 305)
+december <- add_day_of_year(december, 335)
+
+january <- convert_to_character(january)
+february <- convert_to_character(february)
+march <- convert_to_character(march)
+april <- convert_to_character(april)
+may <- convert_to_character(may)
+june <- convert_to_character(june)
+july <- convert_to_character(july)
+august <- convert_to_character(august)
+september <- convert_to_character(september)
+october <- convert_to_character(october)
+november <- convert_to_character(november)
+december <- convert_to_character(december)
+
+year_data <- bind_rows(january, february, march, april, may, june, july, august, september, october, november, december)
+
+year_data$Daylength_numeric <- sapply(year_data$Daylength, time_to_hours)
+
+min_value <- year_data %>% filter(Daylength_numeric == min(Daylength_numeric))
+max_value <- year_data %>% filter(Daylength_numeric == max(Daylength_numeric))
+max_value_x <- year_data %>% filter()
+
+month_labels <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+month_breaks <- c(1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335)
+
+
+ggplot(data = year_data, aes(x = Day_of_Year, y = Daylength_numeric)) +
+  geom_line(color = "#1f78b4", size = 1) +
+  geom_point(color = "red", size = NA, alpha = 0.5) +
+  geom_point(data = min_value, aes(x = Day_of_Year, y =      Daylength_numeric),color = "black", size = 4, shape = 21, fill = "#a6cee3", alpha = 0.8) +
+  geom_point(data = max_value, aes(x = Day_of_Year, y = Daylength_numeric),color = "black", size = 4, shape = 21, fill = "#a6cee3", alpha = 0.8) +
+     geom_text(
+    data = min_value, fontface = "plain", aes(label = paste0("Min: 8.2 ")),
+    vjust = -3, hjust = 2.3, color = "black"
+  ) +
+  geom_text(
+    data = max_value, aes(label = paste0("Max: 16.24")),
+    vjust = 2, hjust = 2, color = "black"
+  ) + 
+  geom_segment(data = min_value, aes(x = Day_of_Year, xend = Day_of_Year,y = 8, yend = Daylength_numeric), linetype = "dashed", color = "black") +
+  geom_segment(data = max_value, aes(x = Day_of_Year, xend = Day_of_Year,y = 8, yend = Daylength_numeric), linetype = "dashed", color = "black") +
+  geom_segment(data = min_value, aes(x = 1, xend = Day_of_Year, y = Daylength_numeric, yend = Daylength_numeric), linetype = "dashed", color = "black") +
+  geom_segment(data = max_value, aes(x = 1, xend = Day_of_Year, y = Daylength_numeric, yend = Daylength_numeric),linetype = "dashed", color = "black") +
+   #geom_vline(data = min_value, aes(xintercept = Day_of_Year), linetype = "dashed", color = "#33a02c") +
+  #geom_vline(data = max_value, aes(xintercept = Day_of_Year), linetype = "dashed", color = "#33a02c") +
+  #geom_hline(data = min_value, aes(yintercept = Daylength_numeric), linetype = "dashed", color = "#33a02c") +
+  #geom_hline(data = max_value, aes(yintercept = Daylength_numeric), linetype = "dashed", color = "#33a02c") +
+  labs(
+    title = "Day Length Trend Throughout the Year",
+    x = "Day of the Year",
+    y = "Day Length (Hours)",
+    caption = "Whole year from 1 january",
+    subtitle = "Graph that displayed dependence between Daylength and Day of the year"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = month_breaks, labels = month_labels, minor_breaks = NULL) +
+  scale_y_continuous(breaks = seq(1, 18), minor_breaks = NULL)
+  #scale_x_continuous(breaks = seq(1, 365, by = 20), minor_breaks = NULL) +
+ # scale_y_continuous(breaks = seq(1, 18), minor_breaks = NULL)
+
 ```
