@@ -17,7 +17,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-This report examines rankings of Ukrainian universities in 2024 as reported by Euro Osvita . 
+This report examines rankings of Ukrainian universities in 2024 as reported by ... . 
 
 # Data
 
@@ -60,7 +60,7 @@ tab_name2 <- "input"
 
 ds_edu_index <- read_sheet(sheet_name,tab_name2,skip = 0)
 spreadsheet_url <- "https://docs.google.com/spreadsheets/d/1es_-MBukFcmptQ6IvYmT1Q6kC2ZXHOye0IBPSQbChcQ/edit?usp=sharing"
-ds_edu_index %>% glimpse()
+ds_edu_index %>% 
 ```
 
 
@@ -68,29 +68,29 @@ ds_edu_index %>% glimpse()
 #| label: tweak-data-1
 #| code-summary: Wrangle data
 var_names <- c(
- "rank_2024"         = "РЕЙТИНГ  2024"
-,"school_name"       = "ЗВО"
-,"index_2024"        = "∑  ІНДЕКСІВ  ЗВО"
-,"qs_rank"           = "Рейтинг  QS"
-,"qs_index"          = "ІНДЕКС  для  QS"
-,"scopus_rank"       = "Рейтинг  Scopus"
-,"scopus_index"      = "ІНДЕКС  для  Scopus"
-,"webometrics_rank"  = "Рейтинг  Webometrics"
+ "rank_2024" = "РЕЙТИНГ  2024"
+,"school_name" = "ЗВО"
+,"index_2024" = "∑  ІНДЕКСІВ  ЗВО"
+,"qs_rank" = "Рейтинг  QS"
+,"qs_index" = "ІНДЕКС  для  QS"
+,"scopus_rank" = "Рейтинг  Scopus"
+,"scopus_index" = "ІНДЕКС  для  Scopus"
+,"webometrics_rank" = "Рейтинг  Webometrics"
 ,"webometrics_index" = "ІНДЕКС  для  Webometrics"
-,"uimpact_rank"      = "Рейтинг  THE  University  Impact"
-,"uimpact_index"     = "ІНДЕКС  для  THE  University  Impact"
-,"wur_rank"          = "Рейтинг  THE  WUR"
-,"wur_index"         = "ІНДЕКС  для  THE  WUR"
-,"qswur_rank"        = "QS  WUR  Sustainability"
-,"qswur_index"       = "ІНДЕКС  для  QS  WUR  Sustainability"
-,"competition_rank"  = "Рейтинг  переможців  наукових  конкурсів"
+,"uimpact_rank" = "Рейтинг  THE  University  Impact"
+,"uimpact_index" = "ІНДЕКС  для  THE  University  Impact"
+,"wur_rank" = "Рейтинг  THE  WUR"
+,"wur_index" = "ІНДЕКС  для  THE  WUR"
+,"qswur_rank" = "QS  WUR  Sustainability"
+,"qswur_index" = "ІНДЕКС  для  QS  WUR  Sustainability"
+,"competition_rank" = "Рейтинг  переможців  наукових  конкурсів"
 ,"competition_index" = "ІНДЕКС  для  переможців  наукових  конкурсів"
-,"naqa_rank"         = "Рейтинг  Акредитаційних  справ  НАЗЯВО  2019-2023"
-,"naqa_index"        = "ІНДЕКС  для  Акредитаційних  справ  НАЗЯВО  2019-2023"
-,"patent_rank"       = "Рейтинг  за  кількістю  отриманих  патентів"
-,"patent_index"      = "ІНДЕКС  для  отриманих  патентів"
-,"mean_rank"         = "Середнє  арифметичне  рейтингових  місць  за  Заявами  вступників  та  СКБ"
-,"mean_index"        = "ІНДЕКС  для  Заяв  вступників  та  СКБ"
+,"naqa_rank" = "Рейтинг  Акредитаційних  справ  НАЗЯВО  2019-2023"
+,"naqa_index" = "ІНДЕКС  для  Акредитаційних  справ  НАЗЯВО  2019-2023"
+,"patent_rank" = "Рейтинг  за  кількістю  отриманих  патентів"
+,"patent_index" = "ІНДЕКС  для  отриманих  патентів"
+,"mean_rank" = "Середнє  арифметичне  рейтингових  місць  за  Заявами  вступників  та  СКБ"
+,"mean_index" = "ІНДЕКС  для  Заяв  вступників  та  СКБ"
 )
 
 ds0 %>% glimpse()
