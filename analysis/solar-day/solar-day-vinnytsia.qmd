@@ -1,23 +1,43 @@
 ---
 title: "Length of solar day in Vinnytsia"
-format: html
+format: 
+  html: 
+    toc: true
+    toc-location: right 
+    embed-resources: true
 editor: visual
 ---
 
+
+# Enviroment
 ```{r}
-#| label: tweak-data-1
-#| code-summary: Wrangle datas
-#| warning=F
+#| label: Enviroment
+#| results: false
+#| warning: false
+
+
 library(tidyverse)
 library(rvest)
 library(dplyr) 
 library(ggplot2)
+```
+
+# Data import
+```{r}
+#| label: tweak-data-1
+#| code-summary: Wrangle datas
+#| warning: false
+#| results: false
+#| code-fold: true
+
 
 # ---- December -----------------------------------------------------
 url_dec <- "https://www.timeanddate.com/sun/ukraine/vinnytsia"
 webpage_dec <- read_html(url_dec)
 tables_dec <- html_table(webpage_dec, fill = TRUE)
 ds0_dec <- tables_dec[[2]]
+
+print(ds0_dec)
 
 ds_daylength_dec <- ds0_dec %>% select(4)
 ds_daylength_dec <- ds_daylength_dec[-nrow(ds_daylength_dec),]
@@ -286,13 +306,12 @@ print(year)
 ```
 
 ```{r}
-#| label: tweak-data-1
+#| label: tweak-data-2
 #| code-summary: Wrangle datas
-#| warning=F
-library(tidyverse)
-library(rvest)
-library(dplyr) 
-library(ggplot2)
+#| warning: false
+#| eval: false
+#| echo: false
+
 
 time_to_hours <- function(time) {
   parts <- str_split(time, ":")[[1]]
@@ -318,15 +337,15 @@ ggplot(data = august, aes(x = Year, y = Daylength_numeric)) +
   theme_minimal()
 
 ```
-
+# Graph 1
 ```{r}
-#| label: tweak-data-1
-#| code-summary: Wrangle datas
-#| warning=F
-library(tidyverse)
-library(rvest)
-library(dplyr) 
-library(ggplot2)
+#| label: graph-1
+#| code-summary: Graph 1 code
+#| warning: false
+#| results: hold
+#| code-fold: true
+
+
 
 add_day_of_year <- function(data, start_day) {
   data <- data %>% mutate(Day_of_Year = start_day:(start_day + nrow(data) - 1))
@@ -337,6 +356,11 @@ convert_to_character <- function(data) {
   data <- data %>% mutate(Year = as.character(Year))
   return(data)
 }
+
+time_to_hours <- function(time) {
+  parts <- str_split(time, ":")[[1]]
+  as.numeric(parts[1]) + as.numeric(parts[2]) / 60 + as.numeric(parts[3]) / 3600
+} 
 
 january <- add_day_of_year(january, 1)
 february <- add_day_of_year(february, 32)  
@@ -365,6 +389,8 @@ november <- convert_to_character(november)
 december <- convert_to_character(december)
 
 year_data <- bind_rows(january, february, march, april, may, june, july, august, september, october, november, december)
+
+year_data_max <- bind_rows(may, june, july)
 
 year_data$Daylength_numeric <- sapply(year_data$Daylength, time_to_hours)
 
@@ -406,9 +432,57 @@ ggplot(data = year_data, aes(x = Day_of_Year, y = Daylength_numeric)) +
     subtitle = "Graph that displayed dependence between Daylength and Day of the year"
   ) +
   theme_minimal() +
-  scale_x_continuous(breaks = month_breaks, labels = month_labels, minor_breaks = NULL) +
-  scale_y_continuous(breaks = seq(1, 18), minor_breaks = NULL)
   #scale_x_continuous(breaks = seq(1, 365, by = 20), minor_breaks = NULL) +
  # scale_y_continuous(breaks = seq(1, 18), minor_breaks = NULL)
+  scale_x_continuous(breaks = month_breaks, labels = month_labels, minor_breaks = NULL) +
+  scale_y_continuous(breaks = seq(1, 18), minor_breaks = NULL)
+
+
+
+```
+
+# Graph 2
+```{r}
+#| label: graph-2
+#| code-summary: Graph 2 code
+#| warning: false
+#| code-fold: true
+#| results: hold
+
+
+
+filtered_data <- year_data %>%
+  filter(Day_of_Year >= 121 & Day_of_Year <= 213)
+
+month_labels <- c("May", "June", "July")
+month_breaks <- c(121, 152, 182)
+
+
+min_value_1 <- filtered_data %>% filter(Daylength_numeric == min(Daylength_numeric))
+max_value_1 <- filtered_data %>% filter(Daylength_numeric == max(Daylength_numeric))
+
+
+ggplot(data = filtered_data, aes(x = Day_of_Year, y = Daylength_numeric)) +
+  geom_line(color = "#1f78b4", size = 1) +
+  geom_point(data = max_value_1, aes(x = Day_of_Year, y = Daylength_numeric), 
+             color = "red", size = 4, shape = 16) +
+  geom_text( data = max_value_1, aes(label = paste0("Max: 16.24")),
+    vjust = 5, hjust = -0, color = "black"
+  ) + 
+  ylim(14, 17) +
+  labs(
+    title = "Day Length Trend for May, June, and July",
+    x = "Day of the Year",
+    y = "Day Length (Hours)",
+    caption = "Filtered for May, June, and July",
+    subtitle = "Graph that displays the trend of day length"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(
+    breaks = month_breaks,  # Breaks for May, June, and July
+    labels = month_labels, # Labels for selected months
+    minor_breaks = NULL
+  ) +
+  scale_y_continuous(breaks = seq(8, 25), minor_breaks = NULL)
 
 ```
