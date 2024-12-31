@@ -17,18 +17,18 @@ editor_options:
   chunk_output_type: console
 ---
 
-This report examines rankings of Ukrainian universities in 2024 as reported by ... . 
+This report examines rankings of Ukrainian universities in 2024 as reported by ... .
 
 # Data
 
-We extract the [data table](https://euroosvita.net/index.php/?category=49&id=8251)  with university rankings for 2024 as reported by [Euro Osvita][https://euroosvita.net]. 
+We extract the [data table](https://euroosvita.net/index.php/?category=49&id=8251) with university rankings for 2024 as reported by \[Euro Osvita\]\[https://euroosvita.net\].
 
 ```{r}
-#| warning=F
 #| label: load-data-1
-#| code
+#| warning: false
 library(tidyverse)
 library(rvest)
+library(ggplot2)
 
 # Specify the URL of the webpage
 url <- "https://euroosvita.net/index.php/?category=49&id=8251"
@@ -43,8 +43,8 @@ tables <- html_table(webpage, fill = TRUE)
 ds0 <- tables[[5]]
 ```
 
+A [separate page](https://euroosvita.net/index.php/?category=1&id=8252) describes 10 indices used to compile the ranking.
 
-A [separate page](https://euroosvita.net/index.php/?category=1&id=8252) describes  10 indices used to compile the ranking.
 ```{r}
 # we manually copy-paste Table 3 into a google spreadsheet, manually tweak,
 # augment with additional variables, and inport into R.  Consider this workflow,
@@ -60,9 +60,8 @@ tab_name2 <- "input"
 
 ds_edu_index <- read_sheet(sheet_name,tab_name2,skip = 0)
 spreadsheet_url <- "https://docs.google.com/spreadsheets/d/1es_-MBukFcmptQ6IvYmT1Q6kC2ZXHOye0IBPSQbChcQ/edit?usp=sharing"
-ds_edu_index %>% 
+ds_edu_index %>% glimpse()
 ```
-
 
 ```{r}
 #| label: tweak-data-1
@@ -110,3 +109,209 @@ ds_names  %>% print(n=nrow(.))
 ds1 %>% glimpse()
 ```
 
+# Tweek data 2
+
+We can see that the *"index_2024"* directly proportional to *"rank_2024"*
+
+We can see that the *"qs_index"* directly proportional to *"qs_rank"*
+
+Also, lowest value of *"qs_rank"* is 7
+
+```{r}
+#| label: tweek-data-2
+#| code-summary: Preparing data to use 
+#| warning: false
+#| results: false
+#| code-fold: true
+
+convert_to_numeric <- function(x) {
+  # Replace comma with dot
+  x <- gsub(",", ".", x)
+  # Convert to numeric
+  as.numeric(x)
+}
+
+number_students <- 
+  c(40500, 32000, 	33500, 16000, 	12000, 19357, 26000, 24000, 20000, 8000, 	8260, 13958, 4422,  20000, 14000, 10315, 	15479, 	14460, 9234 , 6530, 	27517,6167, 	6000, 	8589, 7000, 	6618, 	12200, 12000, 	6300, 	10000, 3847, 25000, 15000, 5284, 14000,  20000, 6000, 20000, 	7403, 	20000, 36600, 4000, 8000, 	14000, 5000, 5150, 9000, 178, 4500, 8840)
+
+ds2 <- 
+  ds1 %>% 
+  mutate(
+    scopus_index = convert_to_numeric(scopus_index),
+    index_2024 = convert_to_numeric(index_2024),
+    rank_2024 = as.numeric(rank_2024),
+    scopus_rank = as.numeric(scopus_rank),
+    qs_rank = as.numeric(qs_rank)
+  ) 
+ds2 <- 
+  ds2 %>% 
+  filter(
+    rank_2024 <= 50
+  )
+
+ds2 <- ds2 %>%
+  mutate(number_students = number_students)
+
+ds2 <- 
+  ds2 %>% 
+  mutate(
+    number_students = as.numeric(number_students)
+  )
+
+ds2_scopus <- 
+  ds2 %>% 
+  filter(
+    scopus_rank > rank_2024
+  )
+
+ds2_scopus_high_qs <- 
+  ds2_scopus %>% 
+  filter(
+    qs_rank < 7
+  )
+ds2_scopus_low_qs <- 
+  ds2_scopus %>% 
+  filter(
+    qs_rank == 7
+  )
+
+ds2_rank <- 
+  ds2 %>% 
+  filter(
+    rank_2024 > scopus_rank
+  )
+
+ds2_rank_high_qs <- 
+  ds2_rank %>% 
+  filter(
+    qs_rank < 7
+  )
+ds2_rank_low_qs <- 
+  ds2_rank %>% 
+  filter(
+    qs_rank == 7
+  )
+
+ds2_kyiv <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Київ")))
+ds2_lviv <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Львів")))
+ds2_zhu <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Житом")))
+ds2_kharkiv <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Харків")))
+ds2_vinn <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Вінн")))
+ds2_cher <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Чернів")))
+ds2_kam <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Кам'ян")))
+ds2_odd <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Одес")))
+ds2_hme <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Хмель")))
+ds2_dnipro <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Дніпро")))
+ds2_sumy <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Суми")))
+ds2_cherkasy <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Черкаси")))
+ds2_mykolaiv <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Миколаїв")))
+ds2_kropyvnytskyi <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Кропивницький")))
+ds2_poltava <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Полтава")))
+ds2_zaporizhzhia <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Запоріжжя")))
+ds2_ternopil <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Терноп")))
+ds2_ivano_frankivsk <- ds2 %>% filter(if_any(everything(), ~ str_detect(.x, "Івано-Франків")))
+
+ds2_kyiv_kpi <- 
+  ds2 %>% 
+  filter(if_any(everything(), ~ str_detect(.x, "Київський  політехнічний  інститут  імені  Ігоря  Сікорського")))
+
+determine_qs_rank <- function(data) {
+  if (!"school_name" %in% colnames(data) || !"qs_rank" %in% colnames(data)) {
+    stop("The dataset must contain 'university_name' and 'qs_rank' columns.")
+  }
+  
+  data %>% 
+    select(school_name, qs_rank) %>% 
+    arrange(qs_rank)  # Sort universities by qs_rank
+}
+  
+qs_rank_values <- determine_qs_rank(ds2)  
+
+# ---- Ranks -----------------------------------------------------
+#ds2 <- ds2 %>% slice(1:2)
+#ds2_ranks <- 
+          #ds2 %>%
+           # select(
+             # contains("rank"),
+             # contains("name")
+            #)
+
+#ds2_ranks <- 
+  #ds2_ranks %>%
+  #(across(-school_name, as.numeric))
+#ds2_ranks <- 
+  #ds2_ranks %>% 
+  #select(-mean_rank)
+# ---- КПІ -----------------------------------------------------
+#ds2_ranks_kpi <- 
+  #ds2_ranks %>% 
+  #slice(1)
+  
+ds2 %>% glimpse()
+
+```
+
+# Graph 1
+
+Graph shows the relation between Scopus rank and Rank 2024.
+
+The red means that the university has higher position in **Scopus rank** than in **Rank 2024**
+
+The blue mean that the university has higher position in **Rank 2024** than in **Scopus rank**
+
+Squares mean that the university has higher rank in QS Rate than 7, the bigger square is the better rank the university has.
+
+The more visible objects are the more students teaching there.
+
+```{r}
+#| label: graph-1
+#| code-fold: true
+#| results: hold
+#| code-summary: Graph 1
+#| warning: false
+
+g1 <- 
+  ds2 %>% 
+  ggplot(aes(x = rank_2024, y = scopus_rank)) + 
+  geom_point(data = ds2_scopus_low_qs, aes(size = 1 / qs_rank, alpha = number_students), color = "red", shape = 21, fill = "grey", size = 3) +
+  geom_point(data = ds2_scopus_high_qs, aes(size = 1 / qs_rank, alpha = number_students), color = "red", shape = 22, fill = "grey") +
+  geom_point(data = ds2_rank_low_qs, aes(size = 1 / qs_rank, alpha = number_students), color = "blue", shape = 21, fill = "grey", size = 3) +
+  geom_point(data = ds2_rank_high_qs, aes(size = 1 / qs_rank, alpha = number_students), color = "blue", shape = 22, fill = "grey" ) +
+  #geom_point(data = ds2_kyiv_kpi, shape = 21, fill = "gold", color = "black", size = 5, stroke = 1.5) +  
+   guides(alpha = guide_legend(override.aes = list(shape = 21, color = "grey",fill = "grey"))) +
+   guides(size = guide_legend(override.aes = list(shape = 22, color = "black", fill = "grey"))) +
+  guides(color = guide_legend(title = "Category")) +
+  scale_size_continuous(range = c(3, 6)) +  
+  scale_alpha_continuous(
+    range = c(0.2, 1),
+    breaks = c(1000, 2000, 5000, 10000, 20000, 30000, 40000),  
+    labels = c("1k", "2k", "5k", "10k", "20k", "30k", "40k") 
+  ) +
+  scale_color_manual(
+    values = c(
+       "Universities which have higher rank in Scopus rank than in Rank 2024 in Ukraine"= "red",
+       "Universities which have higher rank in Rank 2024 in Ukraine than in Scopus rank" = "blue"
+    )
+  ) +
+  labs(
+    size = "QS Rank",
+    alpha = "Number of students",
+    x = "Rank 2024 in Ukraine",
+    y = "Scopus rank",
+    title = "Relation between scopus and 2024 ranks",
+    subtitle = "The number of top 50 universities in Ukraine",
+    caption = "by Oleksandr Koval"
+    ) +         
+  theme_minimal()
+
+g1
+
+```
+
+You can see on this graph:
+
+1.  Relation between **Scopus rank** and **Rank 2024 in Ukraine**
+2.  Universities which have higher rank in *Scopus rank* than in *Rank 2024 in Ukraine* (on graph have red color)
+3.  Universities which have higher rank in *Rank 2024 in Ukraine* than in *Scopus rank* (on graph have blue color)
+4.  The universities which have higher rate of **QS rate** than 7 (On graph show as a squares, the higher rate it have the bigger square is)
+5.  The number of students who studying there (On graph the more visible object the more students studying there)
