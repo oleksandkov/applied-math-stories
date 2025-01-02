@@ -8,8 +8,8 @@ format:
 editor: visual
 ---
 
-
 # Enviroment
+
 ```{r}
 #| label: Enviroment
 #| results: false
@@ -23,6 +23,7 @@ library(ggplot2)
 ```
 
 # Data import
+
 ```{r}
 #| label: tweak-data-1
 #| code-summary: Wrangle datas
@@ -32,7 +33,7 @@ library(ggplot2)
 
 
 # ---- December -----------------------------------------------------
-url_dec <- "https://www.timeanddate.com/sun/ukraine/vinnytsia"
+url_dec <- "https://www.timeanddate.com/sun/ukraine/vinnytsia?month=12&year=2024"
 webpage_dec <- read_html(url_dec)
 tables_dec <- html_table(webpage_dec, fill = TRUE)
 ds0_dec <- tables_dec[[2]]
@@ -337,7 +338,9 @@ ggplot(data = august, aes(x = Year, y = Daylength_numeric)) +
   theme_minimal()
 
 ```
+
 # Graph 1
+
 ```{r}
 #| label: graph-1
 #| code-summary: Graph 1 code
@@ -395,7 +398,13 @@ year_data_max <- bind_rows(may, june, july)
 year_data$Daylength_numeric <- sapply(year_data$Daylength, time_to_hours)
 
 min_value <- year_data %>% filter(Daylength_numeric == min(Daylength_numeric))
+
 max_value <- year_data %>% filter(Daylength_numeric == max(Daylength_numeric))
+max_value <- 
+  max_value %>% 
+  filter(
+    Year == 21
+  )
 max_value_x <- year_data %>% filter()
 
 month_labels <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
@@ -442,6 +451,7 @@ ggplot(data = year_data, aes(x = Day_of_Year, y = Daylength_numeric)) +
 ```
 
 # Graph 2
+
 ```{r}
 #| label: graph-2
 #| code-summary: Graph 2 code
@@ -449,40 +459,199 @@ ggplot(data = year_data, aes(x = Day_of_Year, y = Daylength_numeric)) +
 #| code-fold: true
 #| results: hold
 
+june$Daylength_numeric_june <- sapply(june$Daylength, time_to_hours)
+
+max_value_june <- june %>% filter(Daylength_numeric_june == max(Daylength_numeric_june))
+
+min <- 
+  min(june$Daylength_numeric_june)
+#min <- ceiling(min(june$Daylength_numeric_june))
+min <- round(min(june$Daylength_numeric_june), 1)
 
 
-filtered_data <- year_data %>%
-  filter(Day_of_Year >= 121 & Day_of_Year <= 213)
-
-month_labels <- c("May", "June", "July")
-month_breaks <- c(121, 152, 182)
-
-
-min_value_1 <- filtered_data %>% filter(Daylength_numeric == min(Daylength_numeric))
-max_value_1 <- filtered_data %>% filter(Daylength_numeric == max(Daylength_numeric))
-
-
-ggplot(data = filtered_data, aes(x = Day_of_Year, y = Daylength_numeric)) +
-  geom_line(color = "#1f78b4", size = 1) +
-  geom_point(data = max_value_1, aes(x = Day_of_Year, y = Daylength_numeric), 
-             color = "red", size = 4, shape = 16) +
-  geom_text( data = max_value_1, aes(label = paste0("Max: 16.24")),
-    vjust = 5, hjust = -0, color = "black"
-  ) + 
-  ylim(14, 17) +
+# Create the plot
+ggplot(june, aes(x = as.numeric(Year), y = Daylength_numeric_june)) +
+  geom_line(color = "#1f78b4", size = 1) +            # Line graph
+  geom_point(color = "black", size = 2) +  # Dot graph
+  geom_segment(
+    data = max_value_june,
+    aes(x = as.numeric(Year), xend = as.numeric(Year), y = 15.9, yend = Daylength_numeric_june),
+    color = "black", linetype = "dashed"
+  ) +  # Vertical line to the highest value
+  geom_segment(
+    data = max_value_june,
+    aes(x = 1, xend = as.numeric(Year), y = Daylength_numeric_june, yend = Daylength_numeric_june),
+    color = "black", linetype = "dashed"
+  ) +  # Horizontal line to the highest value
   labs(
-    title = "Day Length Trend for May, June, and July",
-    x = "Day of the Year",
+    title = "Day Length in June",
+    x = "Day of the Month (June)",
     y = "Day Length (Hours)",
-    caption = "Filtered for May, June, and July",
-    subtitle = "Graph that displays the trend of day length"
+    caption = "by Oleksandr Koval",
+    subtitle = "Graph between Daylength and Days of June"
   ) +
   theme_minimal() +
   scale_x_continuous(
-    breaks = month_breaks,  # Breaks for May, June, and July
-    labels = month_labels, # Labels for selected months
+    breaks = c(seq(1, max(as.numeric(june$Year)), by = 2), 20, 21),  # Add June 20 and 21 to the breaks
+    minor_breaks = NULL,
+    limits = c(1, 29)
+  ) +
+  scale_y_continuous(
+    breaks = c(
+      round(floor(min(june$Daylength_numeric_june)), 1),  # Round the minimum value to 1 decimal place
+      seq(floor(min(june$Daylength_numeric_june)) + 0.1, ceiling(max(june$Daylength_numeric_june)), by = 0.1),
+      ceiling(max(june$Daylength_numeric_june)) 
+    ),
+    minor_breaks = NULL,
+    limits = c(15.9, 16.3)
+  )
+
+```
+# Preparing data to use
+```{r}
+#| label: tweek-data-2
+#| code-summary: Preparing
+#| warning: false
+#| results: false
+#| code-fold: true
+
+months <- rep(month.abb, times = c(nrow(january), nrow(february), nrow(march), 
+                                   nrow(april), nrow(may), nrow(june), nrow(july), 
+                                   nrow(august), nrow(september), nrow(october), 
+                                   nrow(november), nrow(december)))
+year$Month <- months
+
+year$Daylength_hours <- sapply(year$Daylength, time_to_hours)
+
+result <- year %>%
+  group_by(Month) %>%
+  arrange(as.numeric(Year)) %>% # Ensure data is sorted within each month
+  mutate(Daily_Diff = c(NA, diff(Daylength_hours))) %>% # Calculate daily differences
+  summarize(Average_Diff = mean(Daily_Diff, na.rm = TRUE)) %>% # Average daily differences
+  arrange(desc(Average_Diff))
+
+
+largest_diff_month <- result[1, ]
+lowest_diff_month <- result[12, ]
+
+result <- result %>%
+  mutate(Average_Diff_Minutes = Average_Diff * 60)
+
+# Extract the largest and lowest average difference months in minutes
+largest_diff_month <- result[1, c("Month", "Average_Diff_Minutes")]
+lowest_diff_month <- result[12, c("Month", "Average_Diff_Minutes")]
+
+
+
+print(largest_diff_month)
+print(lowest_diff_month)
+
+closest_to_zero <- result[which.min(abs(result$Average_Diff)), ]
+
+print(closest_to_zero)
+```
+
+
+
+# Graph 3
+
+```{r}
+#| label: graph-3
+#| code-summary: Graph 3 code
+#| warning: false
+#| code-fold: true
+#| results: hold
+
+# ---- March -----------------------------------------------------
+
+
+march$Daylength_numeric_march <- sapply(march$Daylength, time_to_hours)
+
+
+
+min_value <- min(march$Daylength_numeric_march, na.rm = TRUE)
+max_value <- max(march$Daylength_numeric_march, na.rm = TRUE)
+day_min <- march$Year[which.min(march$Daylength_numeric_march)]  # Day for min value
+day_max <- march$Year[which.max(march$Daylength_numeric_march)]  # Day for max value
+difference <- round(max_value - min_value, 2)
+
+ggplot(data = march, aes(x = as.numeric(Year), y = Daylength_numeric_march)) + 
+  geom_line(color = "#1f78b4", size = 1) + 
+  geom_point(color = "black", size = 2) +
+  geom_segment(aes(x = 0, xend = as.numeric(day_min),y = min_value, yend = min_value), color = "black", linetype = "dashed", fontface = "plain") +
+  geom_segment(aes(x = min(as.numeric(march$Year)), xend =  max(as.numeric(march$Year)),y = max_value, yend = max_value),color = "black", linetype = "dashed",) +
+  annotate("text", x = 7, y = 12,label = paste("Difference:", difference, "hours"), color = "black", size = 3.5, fontface = "plain") +
+  labs(
+    title = "Relation between Daylength and Days of March",
+    subtitle = "Month which have the largest average difference in the length of solar days",
+    x = "Day of the Month",
+    y = "Daylength(Hours)",
+    caption = "by Oleksandr Koval"
+  ) +
+  scale_x_continuous(name = "Day of the Month", 
+                     limits = c(0, max(as.numeric(march$Year))), 
+                     breaks = seq(0, max(as.numeric(march$Year)), by = 5)) +
+  scale_y_continuous(name = "Daylength (Hours)", 
+                     limits = c(min_value - 1, max_value + 1), 
+                     breaks = seq(floor(min_value), ceiling(max_value), by = 1)) +
+  ylim(11, 13) +
+  theme_minimal()
+
+  
+
+
+
+
+```
+
+# Graph 4
+
+```{r}
+#| label: graph-4
+#| code-summary: Graph 4 code
+#| warning: false
+#| code-fold: true
+#| results: hold
+
+closest_to_zero <- result[which.min(abs(result$Average_Diff)), ]
+
+
+
+
+max_value_june <- june %>% filter(Daylength_numeric_june == max(Daylength_numeric_june))
+
+min_value_june_1 <- min(june$Daylength_numeric_june, na.rm = TRUE)
+max_value_june_1 <- max(june$Daylength_numeric_june, na.rm = TRUE)
+day_min_june <- june$Year[which.min(june$Daylength_numeric_march)]  # Day for min value
+day_max_june <- june$Year[which.max(june$Daylength_numeric_march)]  # Day for max value
+
+difference_june <- round(max_value_june_1 - min_value_june_1, 2)
+june$Daylength_numeric_june <- sapply(june$Daylength, time_to_hours)
+
+
+
+ggplot(data = june, aes(x = as.numeric(Year), y = Daylength_numeric_june)) + 
+  geom_line(color = "#1f78b4", size = 1) + 
+  geom_point(color = "black", size = 2) +
+  annotate("text", x = 20, y = 16.10,label = paste("Difference:", difference_june, "hours"), color = "black", size = 3.5, fontface = "plain") +
+  labs(
+    title = "Relation between Daylength and Days of June",
+    x = "Day of the Month (June)",
+    y = "Day Length (Hours)",
+    caption = "by Oleksandr Koval",
+    subtitle = "Month which have the lowest average difference in the length of solar days"
+  ) +
+  theme_minimal() +
+   #scale_x_continuous(breaks = seq(1, max(as.numeric(june$Year)), by = 2),minor_breaks = NULL) +
+  #scale_y_continuous(breaks = seq(floor(min(june$Daylength_numeric_june)),ceiling(max(june$Daylength_numeric_june)), by = 0.1),minor_breaks = NULL) 
+ scale_x_continuous(
+    breaks = seq(1, max(as.numeric(june$Year)), by = 2),
     minor_breaks = NULL
   ) +
-  scale_y_continuous(breaks = seq(8, 25), minor_breaks = NULL)
+  scale_y_continuous(
+    breaks = seq(floor(min(june$Daylength_numeric_june)), ceiling(max(june$Daylength_numeric_june)), by = 0.1),
+    minor_breaks = NULL,
+    limits = c(15.9, 16.3)  # Set limits directly in scale_y_continuous
+  ) 
 
 ```
