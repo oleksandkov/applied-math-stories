@@ -306,7 +306,9 @@ year <- rbind(january, february,march, april,may, june, july, august, september,
 
 print(year)
 ```
+
 # Preparing data to use
+
 ```{r}
 #| label: tweek-data-2
 #| code-summary: Preparing
@@ -650,11 +652,12 @@ You can see the longest and the shortest day in the year.
 
 Longest -- 20 and 21 June (I chose the 21-th, but honestly the difference less than 1s)
 
-Shortest -- 21 December 
+Shortest -- 21 December
 
 # Graph 2 (June)
 
-Graph display month which have the days with highest length of solar day (16:14:30). 
+Graph display month which have the days with highest length of solar day (16:14:30).
+
 ```{r}
 #| label: graph-2
 #| code-summary: Graph 2 code
@@ -708,6 +711,7 @@ In 2024 June have two days when length the solar day are the same. 20 and 21 Jun
 # Graph 3 (June)
 
 Also, June have the *lowest average difference in the length of solar days*.
+
 ```{r}
 #| label: graph-3
 #| code-summary: Graph 3 code
@@ -757,15 +761,15 @@ ggplot(data = june, aes(x = as.numeric(Year), y = Daylength_numeric_june)) +
   ) 
 
 ```
-The difference between the longest night and the shorter night is only 0.28 hours or **16.8 min**. 
+
+The difference between the longest night and the shorter night is only 0.28 hours or **16.8 min**.
 
 I.S -- the International System of Time
 
-
-
 # Graph 4 (March)
 
-Graph shows the months which have the largest average difference of solar day. 
+Graph shows the months which have the largest average difference of solar day.
+
 ```{r}
 #| label: graph-4
 #| code-summary: Graph 4 code
