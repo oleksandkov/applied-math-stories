@@ -280,19 +280,19 @@ g1 <-
   #geom_point(data = ds2_kyiv_kpi, shape = 21, fill = "gold", color = "black", size = 5, stroke = 1.5) +  
    guides(alpha = guide_legend(override.aes = list(shape = 21, color = "grey",fill = "grey"))) +
    guides(size = guide_legend(override.aes = list(shape = 22, color = "black", fill = "grey"))) +
-  guides(color = guide_legend(title = "Category")) +
+  #guides(color = guide_legend(title = "Category")) +
   scale_size_continuous(range = c(3, 6)) +  
   scale_alpha_continuous(
     range = c(0.2, 1),
     breaks = c(1000, 2000, 5000, 10000, 20000, 30000, 40000),  
-    labels = c("1k", "2k", "5k", "10k", "20k", "30k", "40k") 
+    labels = c("1k", "2k", "5k", "10k", "20k", "30k", "40k")
   ) +
-  scale_color_manual(
-    values = c(
-       "Universities which have higher rank in Scopus rank than in Rank 2024 in Ukraine"= "red",
-       "Universities which have higher rank in Rank 2024 in Ukraine than in Scopus rank" = "blue"
-    )
-  ) +
+  #scale_color_manual(
+    #values = c(
+       #"Universities which have higher rank in Scopus rank than in Rank 2024 in Ukraine"= "red",
+       #"Universities which have higher rank in Rank 2024 in Ukraine than in Scopus rank" = "blue"
+    #)
+  #) +
   labs(
     size = "QS Rank",
     alpha = "Number of students",
