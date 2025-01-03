@@ -1,0 +1,342 @@
+---
+title: "Example: Combined in Quarto"
+author: "Andriy Koval, Oleksandr Koval"
+format:
+  html:
+    page-layout: full
+    toc: true
+    toc-location: right
+    code-fold: show
+    theme: simplex
+    highlight-style: github
+    colde-line-numbers: true
+    css: styles.css
+    self-contained: true
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+This report examines rankings of Ukrainian universities in 2024 as reported by ... .
+
+# Data
+
+We extract the [data table](https://euroosvita.net/index.php/?category=49&id=8251) with university rankings for 2024 as reported by \[Euro Osvita\]\[https://euroosvita.net\].
+
+```{r}
+#| label: load-data-1
+#| warning: false
+library(tidyverse)
+library(rvest)
+library(ggplot2)
+
+# Specify the URL of the webpage
+url <- "https://euroosvita.net/index.php/?category=49&id=8251"
+
+# Read the HTML content of the webpage
+webpage <- read_html(url)
+
+# Extract the table(s) from the HTML content
+tables <- html_table(webpage, fill = TRUE)
+
+# Access the desired table (may not be the first one)
+ds0 <- tables[[5]]
+```
+
+A [separate page](https://euroosvita.net/index.php/?category=1&id=8252) describes 10 indices used to compile the ranking.
+
+```{r}
+#| label: import-from-google-sheet
+#| code-summary: Importing data from supporting google sheets
+
+# we manually copy-paste Table 3 into a google spreadsheet, manually tweak,
+# augment with additional variables, and inport into R.  Consider this workflow,
+# as an alternative for using propriary software such as MS Excel
+library(googlesheets4)
+googlesheets4::gs4_deauth() # to indicate there is no need for a access token
+# By default we will work with public Sheets
+# but see https://googlesheets4.tidyverse.org/ for how to set access to private
+# URL https://docs.google.com/spreadsheets/d/1Ha5JmJRzV1e2ljN3lNLu-pZJwyehJPoKrw9CtMvBMks/edit?usp=sharing
+sheet_name <- "1es_-MBukFcmptQ6IvYmT1Q6kC2ZXHOye0IBPSQbChcQ"
+tab_name1 <- "raw"
+tab_name2 <- "input"
+
+ds_edu_index <- read_sheet(sheet_name,tab_name2,skip = 0)
+spreadsheet_url <- "https://docs.google.com/spreadsheets/d/1es_-MBukFcmptQ6IvYmT1Q6kC2ZXHOye0IBPSQbChcQ/edit?usp=sharing"
+ds_edu_index %>% glimpse()
+
+
+ds_school_meta <- 
+  read_sheet(
+    ss = "1MbTBWkIPMeIIjmLH4Q__TVWUg9y9KqTY34MwWYP0HoM"
+    ,sheet = "Sheet1"
+    ,skip = 0
+)
+ds_school_meta %>% glimpse()
+```
+
+```{r}
+#| label: tweak-data-1
+#| code-summary: Wrangle data
+var_names <- c(
+ "rank_2024" = "РЕЙТИНГ  2024"
+,"school_name" = "ЗВО"
+,"index_2024" = "∑  ІНДЕКСІВ  ЗВО"
+,"qs_rank" = "Рейтинг  QS"
+,"qs_index" = "ІНДЕКС  для  QS"
+,"scopus_rank" = "Рейтинг  Scopus"
+,"scopus_index" = "ІНДЕКС  для  Scopus"
+,"webometrics_rank" = "Рейтинг  Webometrics"
+,"webometrics_index" = "ІНДЕКС  для  Webometrics"
+,"uimpact_rank" = "Рейтинг  THE  University  Impact"
+,"uimpact_index" = "ІНДЕКС  для  THE  University  Impact"
+,"wur_rank" = "Рейтинг  THE  WUR"
+,"wur_index" = "ІНДЕКС  для  THE  WUR"
+,"qswur_rank" = "QS  WUR  Sustainability"
+,"qswur_index" = "ІНДЕКС  для  QS  WUR  Sustainability"
+,"competition_rank" = "Рейтинг  переможців  наукових  конкурсів"
+,"competition_index" = "ІНДЕКС  для  переможців  наукових  конкурсів"
+,"naqa_rank" = "Рейтинг  Акредитаційних  справ  НАЗЯВО  2019-2023"
+,"naqa_index" = "ІНДЕКС  для  Акредитаційних  справ  НАЗЯВО  2019-2023"
+,"patent_rank" = "Рейтинг  за  кількістю  отриманих  патентів"
+,"patent_index" = "ІНДЕКС  для  отриманих  патентів"
+,"mean_rank" = "Середнє  арифметичне  рейтингових  місць  за  Заявами  вступників  та  СКБ"
+,"mean_index" = "ІНДЕКС  для  Заяв  вступників  та  СКБ"
+)
+
+ds0 %>% glimpse()
+ds_names <- 
+  ds0 %>% slice(1) %>% t() %>% 
+  as_tibble() %>%
+  rename(
+    ua_name = V1
+  ) 
+
+ds1 <- 
+  ds0 %>% 
+  slice(2:nrow(ds0)) # Because it contains the names of the columns
+
+names(ds1) <- names(var_names)
+ds_names  %>% print(n=nrow(.))
+ds0 %>% glimpse()
+ds1 %>% glimpse()
+```
+
+```{r}
+#| label: inspect-data-1
+#| code-summary: Explore data before tweaking any further
+
+# Let's explore the relationship between ranks and indices
+
+# Overal Rank and Index according to the EuroOsvita method
+ds2 %>% glimpse()
+ds2 %>% 
+  ggplot(aes(x=rank_2024, y = index_2024))+
+  geom_point(shape = 21)+
+  labs(
+    title = "Relationship between index and rank"
+  )
+
+# QS
+ds2 %>% 
+  ggplot(aes(x=qs_rank, y = qs_index, color = as.factor(qs_rank)))+
+  # geom_point(shape = 21)+
+  geom_jitter(shape = 21)+
+  labs(
+    title = "Relationship between index and rank"
+  )
+
+# TODO: study the difference between geom_histogram vs geom_col
+# be ready to explain the difference and when it makes sense to use each
+ds2 %>% 
+  group_by(qs_index) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  print() %>% 
+  ggplot(aes(x=qs_index, y = count))+
+  geom_col()
+
+ds2 %>% 
+  ggplot(aes(x=qs_index))+
+  geom_histogram() # hint: look up default geom_stat
+  
+# Scopus
+ds2 %>% 
+  ggplot(aes(x=scopus_rank, y = scopus_index))+
+  # geom_point(shape = 21)+
+  geom_jitter(shape = 21)+
+  labs(
+    title = "Relationship between index and rank"
+  )
+
+ds2 %>% select(scopus_rank, scopus_index) %>% summary()  
+
+ds2 %>% 
+  group_by(scopus_rank) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  filter( count > 1L)
+   
+
+ds2 %>% 
+  select(1:3, scopus_rank, scopus_index) %>% 
+  filter( scopus_rank == 202L)
+
+# Webometricx
+ds2 %>% 
+  ggplot(aes(x=webometrics_rank, y = webometrics_index))+
+  # geom_point(shape = 21)+
+  geom_point(shape = 21)+
+  labs(
+    title = "Relationship between index and rank"
+  )
+
+ds2 %>% 
+  group_by(webometrics_rank) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  filter(count > 1L)
+
+
+ds2 %>% 
+  ggplot(aes(x=webometrics_index))+
+  geom_histogram()
+
+# University Impact
+ds2 %>% 
+  ggplot(aes(x=uimpact_rank, y = uimpact_index))+
+  # geom_point(shape = 21)+
+  geom_jitter(shape = 21)+
+  labs(
+    title = "Relationship between index and rank"
+  )
+
+ds2 %>% 
+  group_by(uimpact_index) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  ungroup()
+
+
+# Tools for exploring distributions of ranks and indices:
+
+## Univariate:
+# histogram
+# bar plot
+
+## Bivariate:
+# scatter plot
+
+
+```
+
+# Tweek data 2
+
+We can see that the *"index_2024"* directly proportional to *"rank_2024"*
+
+We can see that the *"qs_index"* directly proportional to *"qs_rank"*
+
+Also, the lowest value of *"qs_rank"* is 7
+
+```{r}
+#| label: tweek-data-2
+#| code-summary: Preparing data to use 
+#| warning: false
+#| results: false
+#| code-fold: true
+
+convert_to_numeric <- function(x) {
+  # Replace comma with dot
+  x <- gsub(",", ".", x)
+  # Convert to numeric
+  as.numeric(x)
+}
+
+varnames_in_ds1 <- names(ds1)
+varnames_to_convert_to_numeric <- setdiff(varnames_in_ds1, "school_name")
+
+ds2 <- 
+  ds1 %>% 
+  mutate_at(
+    .vars = varnames_to_convert_to_numeric
+    ,.funs = ~convert_to_numeric(.)
+  ) %>%  
+  left_join(
+    y = ds_school_meta %>% select(rank_2024, student_body_2024)
+    ,by = "rank_2024"
+  )
+
+ds_school_meta %>% glimpse()
+ds2 %>% glimpse()
+```
+
+# Graph 1
+
+Graph shows the relation between Scopus rank and Rank 2024.
+
+The red means that the university has higher position in **Scopus rank** than in **Rank 2024**
+
+The blue mean that the university has higher position in **Rank 2024** than in **Scopus rank**
+
+Squares mean that the university has higher rank in QS Rate than 7, the bigger square is the better rank the university has.
+
+The more visible objects are the more students teaching there.
+
+```{r}
+#| label: graph-1
+#| code-fold: true
+#| results: hold
+#| code-summary: Graph 1
+#| warning: false
+
+g1 <- 
+  ds2 %>% 
+  ggplot(aes(x = rank_2024, y = scopus_rank)) + 
+  geom_point(data = ds2_scopus_low_qs, aes(size = 1 / qs_rank, alpha = number_students), color = "red", shape = 21, fill = "grey", size = 3) +
+  geom_point(data = ds2_scopus_high_qs, aes(size = 1 / qs_rank, alpha = number_students), color = "red", shape = 22, fill = "grey") +
+  geom_point(data = ds2_rank_low_qs, aes(size = 1 / qs_rank, alpha = number_students), color = "blue", shape = 21, fill = "grey", size = 3) +
+  geom_point(data = ds2_rank_high_qs, aes(size = 1 / qs_rank, alpha = number_students), color = "blue", shape = 22, fill = "grey" ) +
+  #geom_point(data = ds2_kyiv_kpi, shape = 21, fill = "gold", color = "black", size = 5, stroke = 1.5) +  
+   guides(alpha = guide_legend(override.aes = list(shape = 21, color = "grey",fill = "grey"))) +
+   guides(size = guide_legend(override.aes = list(shape = 22, color = "black", fill = "grey"))) +
+  #guides(color = guide_legend(title = "Category")) +
+  scale_size_continuous(range = c(3, 6)) +  
+  scale_alpha_continuous(
+    range = c(0.2, 1),
+    breaks = c(1000, 2000, 5000, 10000, 20000, 30000, 40000),  
+    labels = c("1k", "2k", "5k", "10k", "20k", "30k", "40k")
+  ) +
+  #scale_color_manual(
+    #values = c(
+       #"Universities which have higher rank in Scopus rank than in Rank 2024 in Ukraine"= "red",
+       #"Universities which have higher rank in Rank 2024 in Ukraine than in Scopus rank" = "blue"
+    #)
+  #) +
+  labs(
+    size = "QS Rank",
+    alpha = "Number of students",
+    x = "Rank 2024 in Ukraine",
+    y = "Scopus rank",
+    title = "Relation between scopus and 2024 ranks",
+    subtitle = "The number of top 50 universities in Ukraine",
+    caption = "by Oleksandr Koval"
+    ) +         
+  theme_minimal()
+
+g1
+
+```
+
+You can see on this graph:
+
+1.  Relation between **Scopus rank** and **Rank 2024 in Ukraine**
+2.  Universities which have higher rank in *Scopus rank* than in *Rank 2024 in Ukraine* (on graph have red color)
+3.  Universities which have higher rank in *Rank 2024 in Ukraine* than in *Scopus rank* (on graph have blue color)
+4.  The universities which have higher rank of **QS rate** than 7 (On graph show as a squares, the higher rate it have the bigger square is)
+5.  The number of students who are studying there (On graph the more visible objects are the more students studying there)
