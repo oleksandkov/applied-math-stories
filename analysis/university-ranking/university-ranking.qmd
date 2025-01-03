@@ -102,10 +102,11 @@ ds_names <-
 
 ds1 <- 
   ds0 %>% 
-  slice(2:nrow(ds0))
+  slice(2:nrow(ds0)) # Because it contains the names of the columns
 
 names(ds1) <- names(var_names)
 ds_names  %>% print(n=nrow(.))
+ds0 %>% glimpse()
 ds1 %>% glimpse()
 ```
 
@@ -115,7 +116,7 @@ We can see that the *"index_2024"* directly proportional to *"rank_2024"*
 
 We can see that the *"qs_index"* directly proportional to *"qs_rank"*
 
-Also, lowest value of *"qs_rank"* is 7
+Also, the lowest value of *"qs_rank"* is 7
 
 ```{r}
 #| label: tweek-data-2
@@ -131,8 +132,6 @@ convert_to_numeric <- function(x) {
   as.numeric(x)
 }
 
-number_students <- 
-  c(40500, 32000, 	33500, 16000, 	12000, 19357, 26000, 24000, 20000, 8000, 	8260, 13958, 4422,  20000, 14000, 10315, 	15479, 	14460, 9234 , 6530, 	27517,6167, 	6000, 	8589, 7000, 	6618, 	12200, 12000, 	6300, 	10000, 3847, 25000, 15000, 5284, 14000,  20000, 6000, 20000, 	7403, 	20000, 36600, 4000, 8000, 	14000, 5000, 5150, 9000, 178, 4500, 8840)
 
 ds2 <- 
   ds1 %>% 
@@ -143,11 +142,15 @@ ds2 <-
     scopus_rank = as.numeric(scopus_rank),
     qs_rank = as.numeric(qs_rank)
   ) 
+
 ds2 <- 
   ds2 %>% 
   filter(
     rank_2024 <= 50
   )
+
+number_students <- 
+  c(40500, 32000, 	33500, 16000, 	12000, 19357, 26000, 24000, 20000, 8000, 	8260, 13958, 4422,  20000, 14000, 10315, 	15479, 	14460, 9234 , 6530, 	27517,6167, 	6000, 	8589, 7000, 	6618, 	12200, 12000, 	6300, 	10000, 3847, 25000, 15000, 5284, 14000,  20000, 6000, 20000, 	7403, 	20000, 36600, 4000, 8000, 	14000, 5000, 5150, 9000, 178, 4500, 8840)
 
 ds2 <- ds2 %>%
   mutate(number_students = number_students)
@@ -313,5 +316,5 @@ You can see on this graph:
 1.  Relation between **Scopus rank** and **Rank 2024 in Ukraine**
 2.  Universities which have higher rank in *Scopus rank* than in *Rank 2024 in Ukraine* (on graph have red color)
 3.  Universities which have higher rank in *Rank 2024 in Ukraine* than in *Scopus rank* (on graph have blue color)
-4.  The universities which have higher rate of **QS rate** than 7 (On graph show as a squares, the higher rate it have the bigger square is)
-5.  The number of students who studying there (On graph the more visible object the more students studying there)
+4.  The universities which have higher rank of **QS rate** than 7 (On graph show as a squares, the higher rate it have the bigger square is)
+5.  The number of students who are studying there (On graph the more visible objects are the more students studying there)
