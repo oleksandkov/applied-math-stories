@@ -1,6 +1,6 @@
 ---
 title: "Example: Combined in Quarto"
-author: "Andriy Koval"
+author: "Andriy Koval, Oleksandr Koval"
 format:
   html:
     page-layout: full
