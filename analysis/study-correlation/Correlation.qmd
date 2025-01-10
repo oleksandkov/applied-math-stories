@@ -1,0 +1,225 @@
+---
+title: "Correlation"
+author: "Oleksandr Koval"
+format: 
+  html: 
+    toc: true
+    toc-location: right
+    self-contained: true
+    code-line-numbers: true
+editor: visual
+---
+
+# Create data
+
+```{r}
+#| Label: Creating data
+#| code-summary: Creating data
+#| results: false
+#| code-fold: true
+#| warning: false
+
+library(tidyverse)
+library(ggplot2)
+
+b <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) %>% tibble()
+c <- c(18, 36, 60, 12, 6, 30, 72, 24, 42, 60) %>% tibble()
+
+ds0 <- 
+  bind_cols(b, c) %>%  
+  setNames(c("x", "y"))  
+
+ds0 %>% 
+  tibble() %>% 
+  glimpse()
+
+b_1 <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) %>% tibble()
+c_1 <- c(2, 4, 6, 8, 10, 12, 14, 16, 18, 20) %>% tibble()
+
+ds1 <- 
+  bind_cols(b_1, c_1) %>%  
+  setNames(c("x", "y"))  
+
+
+ds1 %>% 
+  tibble() %>% 
+  glimpse()
+
+ds2 <- 
+  ds1 %>% 
+  mutate(x = rev(x))
+
+ds2 %>% glimpse()
+
+b_2 <- c( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10) %>% tibble()
+c_2 <- c(1, 4, 9, 16, 25, 36, 49, 64, 81, 100) %>% tibble()
+
+ds3 <- 
+  bind_cols(b_2, c_2) %>%  
+  setNames(c("x", "y"))  
+
+ds3 %>% glimpse()
+
+ds4 <- 
+  ds3 %>% 
+  mutate(x = rev(x))
+
+ds_function <- function(x) {
+  y <- 2*x
+  return(y)
+}
+ds5 <- tibble(x = seq(0, 10, 1), y = ds_function(seq(0, 10, 1)))
+ds5 %>% glimpse()
+```
+
+# Positive/Negative line
+
+```{r}
+#| Label: Exploring 
+#| code-summary: Exploring 
+#| results: markup
+#| code-fold: true
+
+ds0 %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(0, 10, 1)) +
+  scale_y_continuous(breaks = seq(0,72, 6)) # Creating the graph between x and y arguments 
+
+```
+
+We can see that the graph has not any correlation between x and y.
+
+## Positive line correlation
+
+```{r}
+#| Label: Exploring 2
+#| code-summary: Exploring 2
+#| results: markup
+#| code-fold: true
+
+
+ds1 %>% 
+  ggplot(aes(x=x,y=y))+
+  geom_point() +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(0, 10, 1)) +
+  scale_y_continuous(breaks = seq(0,20, 2)) +
+  geom_line() 
+```
+
+We can see that the graph has **line positive correlation** between x and y.
+
+## Negative line correlation
+
+```{r}
+#| Label: Exploring 3
+#| code-summary: Exploring 3
+#| results: markup
+#| code-fold: true
+
+ds2 %>% 
+  ggplot(aes(x=x,y=y))+
+  geom_point() +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(0, 10, 1)) +
+  scale_y_continuous(breaks = seq(0,20, 2)) +
+  geom_line() 
+
+```
+
+We can see that the graph has **line negative correlation** between x and y.
+
+# Positive/Negative not line correlation
+
+## Positive square correlation
+
+```{r}
+#| Label: Exploring 4
+#| code-summary: Exploring 4
+#| results: markup
+#| code-fold: true
+
+ds3 %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  geom_line() +
+  theme_minimal() + 
+  scale_x_continuous(breaks = seq(0,10,1)) + 
+  scale_y_continuous(breaks = seq(0,100,10))
+
+```
+
+We can see that the graph has **positive square correlation** between x and y.
+
+## Negative square correlation
+
+```{r}
+#| Label: Exploring 5
+#| code-summary: Exploring 5
+#| results: markup
+#| code-fold: true
+
+ds4 %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  geom_line() +
+  theme_minimal() + 
+  scale_x_continuous(breaks = seq(0,10,1)) + 
+  scale_y_continuous(breaks = seq(0,100,10))
+
+```
+
+We can see that the graph has **negative square correlation** between x and y.
+
+# Differnce between correlation and relation
+
+If we change one of arguments in correlation another argument **wont change**
+
+If we change one argument in relation another argument **will change**
+
+In relation arguments interconnected, in correlation not
+
+## Correlation with changed data
+
+```{r}
+#| Label: Example 1
+#| code-summary: Ecample
+#| results: hold
+#| code-fold: true
+
+ds1 %>% 
+  mutate(
+    x = c(5, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+  ) %>%  
+  ggplot(aes(x=x,y=y))+
+  geom_point() +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(0, 10, 1)) +
+  scale_y_continuous(breaks = seq(0,20, 2)) +
+  geom_line() 
+
+```
+
+## Relation with changed data
+
+```{r}
+#| Label: Example 2
+#| code-summary: Ecample
+#| results: hold
+#| code-fold: true
+
+ds5 %>% 
+  mutate(
+    x = seq(0, 10, 1,) + pi
+  ) %>% 
+  ggplot(aes(x=x,y=y))+
+  geom_point() +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(0, 10, 1)) +
+  scale_y_continuous(breaks = seq(0,20, 2)) +
+  geom_line() 
+```
+
+We can see that in correlation y not changed when we change x. Despite, in relation if we changed x, y also will change.
