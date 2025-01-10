@@ -16,7 +16,6 @@ editor: visual
 editor_options: 
   chunk_output_type: console
 ---
-
 This report examines rankings of Ukrainian universities in 2024 as reported by ... .
 
 # Data
@@ -71,8 +70,17 @@ ds_school_meta <-
     ss = "1MbTBWkIPMeIIjmLH4Q__TVWUg9y9KqTY34MwWYP0HoM"
     ,sheet = "Sheet1"
     ,skip = 0
-)
+) 
 ds_school_meta %>% glimpse()
+
+ds_school_meta2 <- 
+  read_sheet(
+    ss = "1MDc4A-_ueo7a90lxJBzIGE-VsKzwjkOTs7Oi_z1ZRsE"
+    ,sheet = "Sheet2"
+    ,skip = 0
+  ) 
+
+ds_school_meta2 %>% glimpse()
 ```
 
 ```{r}
@@ -122,6 +130,68 @@ ds0 %>% glimpse()
 ds1 %>% glimpse()
 ```
 
+# Tweek data 2
+
+We can see that the *"index_2024"* directly proportional to *"rank_2024"*
+
+We can see that the *"qs_index"* directly proportional to *"qs_rank"*
+
+Also, the lowest value of *"qs_rank"* is 7
+
+```{r}
+#| label: tweek-data-2
+#| code-summary: Preparing data to use 
+#| warning: false
+#| results: false
+#| code-fold: true
+
+convert_to_numeric <- function(x) {
+  # Replace comma with dot
+  x <- gsub(",", ".", x)
+  # Convert to numeric
+  as.numeric(x)
+}
+
+varnames_in_ds1 <- names(ds1)
+varnames_to_convert_to_numeric <- setdiff(varnames_in_ds1, "school_name")
+
+ds2 <- 
+  ds1 %>% 
+  mutate_at(
+    .vars = varnames_to_convert_to_numeric
+    ,.funs = ~convert_to_numeric(.)
+  ) %>%  
+  left_join(
+    y = ds_school_meta %>% select(rank_2024, student_body_2024)
+    ,by = "rank_2024"
+  ) %>% 
+  mutate(
+    student_body_2024 = as.numeric(student_body_2024)
+  )
+
+ds3<- ds_school_meta %>%
+  left_join(ds_school_meta2, by = "school_name")  %>% 
+  slice(1:50)
+
+ds4 <- ds2 %>% 
+  slice(1:50) %>% 
+  left_join(ds3, by = "rank_2024") %>% 
+  select(-school_name.x) %>% 
+  select(-student_body_2024.x) %>% 
+  rename(
+    student_body_2024 = student_body_2024.y
+    ,school_name = school_name.y
+         ) %>% 
+  select(rank_2024,school_name,school_abb, index_2024, student_body_2024,city,oblast,num_requests, mean_bal, num_budget, num_faculty, num_specility, scopus_rank, scopus_index, webometrics_rank, webometrics_index, qs_rank, qs_index, uimpact_rank, uimpact_index, wur_rank, wur_index, qswur_rank, qswur_index, competition_rank, competition_index, patent_rank, patent_index, naqa_rank)
+  
+ds4 %>% glimpse()
+ds3 %>% glimpse()  
+ds_school_meta %>% glimpse()
+ds2 %>% glimpse()
+```
+
+# Exploring
+
 ```{r}
 #| label: inspect-data-1
 #| code-summary: Explore data before tweaking any further
@@ -138,6 +208,7 @@ ds2 %>%
   )
 
 # QS
+# All universities which has qs rank higher than 7, only  are on QS website. Universities which are not on the website have rank 7.
 ds2 %>% 
   ggplot(aes(x=qs_rank, y = qs_index, color = as.factor(qs_rank)))+
   # geom_point(shape = 21)+
@@ -223,6 +294,218 @@ ds2 %>%
   ) %>% 
   ungroup()
 
+# The WUR index
+
+# The rate of top local universities according to Times Higher Education ("THE World University Ranking 2024") 
+
+ds2 %>% 
+  ggplot(aes(x = wur_rank, y = wur_index)) + 
+  #geom_point()
+  #geom_jitter()
+  geom_col()
+
+
+ds2 %>% 
+  group_by(wur_index) %>% 
+  summarize(
+    count = n()
+  ) %>% 
+  ungroup()
+
+ds2 %>% 
+  group_by(wur_rank) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() #%>% 
+  #filter( count > 1)
+
+# QS  WUR  Sustainability
+
+# This rank helps to understand how universitis refer to climatic problems
+
+ds2 %>% 
+  ggplot(aes(x= qswur_rank, y = qswur_index))+ 
+  #geom_point()
+  #geom_jitter()
+  geom_col()
+
+ds2 %>% 
+  group_by(qswur_rank) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup()
+
+ds2 %>% 
+  group_by(qswur_index) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  filter( count > 1L)
+
+
+# Competion rank
+
+
+# Dercribes how effective and often the university is involved in differendt scintist projects.
+
+ds2 %>% 
+  ggplot(aes(x= competition_rank, y = competition_index)) +
+  geom_point()
+
+ds2 %>% 
+  group_by(competition_rank) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  filter( count > 1) %>% 
+  print(n = Inf)
+ds2 %>% 
+  group_by(competition_index) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  #filter( count > 1) %>% 
+  print(n = Inf)
+
+# NAQA rate
+
+ds2 %>% 
+  ggplot(aes(x = naqa_rank, y = naqa_index))+
+  geom_point()
+
+ds2 %>% 
+  group_by(naqa_rank) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  #filter(count > 1) %>% 
+  print(n = Inf)
+ds2 %>% 
+  group_by(naqa_index) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  #filter(count > 1) %>% 
+  print(n = Inf)
+
+# Patent Rate
+
+# The higher rank the more patents have university 
+
+ds2 %>% 
+  ggplot(aes(x = patent_rank, y = patent_index)) +
+  geom_point()
+
+ds2 %>% 
+  group_by(patent_rank) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  filter(count > 1) %>% 
+  print(n = Inf) 
+ds2 %>% 
+  group_by(patent_index) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  filter(count > 1) %>% 
+  print(n = Inf) 
+
+ds2 %>% 
+  ggplot(aes(x = patent_rank)) + 
+  geom_bar()
+
+# Mean rank
+
+ds2 %>% 
+  ggplot(aes(x = mean_rank, y = mean_index)) + 
+  #geom_point()
+  geom_col()
+ds2 %>% 
+  ggplot(aes(x = mean_rank)) + 
+  geom_bar()
+
+ds2 %>% 
+  group_by(mean_rank) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  print(n = Inf)
+
+# ------- Exploring --------
+
+ds2 %>%
+  filter(
+competition_index == min(competition_index)
+  ) %>% 
+  select(competition_rank,competition_index) %>% 
+  tibble() %>% 
+  print(n = Inf)
+
+
+ds2 %>% 
+  filter(
+    naqa_index == min(naqa_index)
+  ) %>% 
+  select(naqa_rank, naqa_index) %>% 
+  tibble()
+
+# From https://euroosvita.net/index.php/?category=1&id=8252, we know that the min index that affect on university is 0.055. So, 0.055 is the lowest possible index.
+
+ds2 %>%
+  slice_min(competition_index, n = 3) %>%
+  select(competition_rank,competition_index) %>% 
+  tibble() %>% 
+  print(n = Inf)
+
+ds2 %>% 
+  slice_min(naqa_index, n = 3) %>% 
+  select(naqa_rank, naqa_index) %>% 
+  tibble()
+ 
+# The further values in the table naqa_index and competition_index are multiple to 0.055.
+
+#-----Exploring№2-----
+ds2 %>% 
+  slice_min(wur_index, n = 2) %>% 
+  select(wur_rank, wur_index) %>% 
+  tibble()
+# From https://euroosvita.net/index.php/?category=1&id=8252, the lowest possible value is 0.150
+
+ds2 %>% 
+  slice_min(qs_index, n = 2) %>% 
+  select(qs_rank, qs_index) %>% 
+  tibble()
+
+ds2 %>% 
+  slice_min(scopus_index, n = 2) %>% 
+  select(scopus_rank, scopus_index) %>% 
+  tibble()
+
+# This is confirmation that higher position in each rank the lower possible index the university have in the table, another university have multiple indexs in the table to lowest. For example: Rank 1 in scopus_rank has index 0.13 in scopus_index, rank 2 in scupus_rank has index 0.26 (that twise 0.13)
+
+# Adding to each rank the priority:
+# 1 == Rank 2024
+# 2 == Scopus rank
+# 3 == Webometric rank
+# 4 == QS rank
+# 5 == Uimpact rank
+# 6 == WUR rank
+# 7 == QSwur rank
+# 8 == Competition rank
+# 9 == Patent rank
+# 10 == Naqa rank
+#------ Information------
 
 # Tools for exploring distributions of ranks and indices:
 
@@ -236,44 +519,49 @@ ds2 %>%
 
 ```
 
-# Tweek data 2
-
-We can see that the *"index_2024"* directly proportional to *"rank_2024"*
-
-We can see that the *"qs_index"* directly proportional to *"qs_rank"*
-
-Also, the lowest value of *"qs_rank"* is 7
+# Graph 2
 
 ```{r}
-#| label: tweek-data-2
-#| code-summary: Preparing data to use 
-#| warning: false
-#| results: false
+#| label: graph-2
 #| code-fold: true
+#| results: hold
+#| code-summary: Graph 2
+#| warning: false
 
-convert_to_numeric <- function(x) {
-  # Replace comma with dot
-  x <- gsub(",", ".", x)
-  # Convert to numeric
-  as.numeric(x)
-}
-
-varnames_in_ds1 <- names(ds1)
-varnames_to_convert_to_numeric <- setdiff(varnames_in_ds1, "school_name")
-
-ds2 <- 
-  ds1 %>% 
-  mutate_at(
-    .vars = varnames_to_convert_to_numeric
-    ,.funs = ~convert_to_numeric(.)
-  ) %>%  
-  left_join(
-    y = ds_school_meta %>% select(rank_2024, student_body_2024)
-    ,by = "rank_2024"
+ds4 %>% 
+  ggplot(aes(x = rank_2024, y = student_body_2024)) + 
+  geom_point(aes(
+    fill = case_when(
+      student_body_2024 > 19300 ~ city,           
+      rank_2024 <= 23 ~ city,                   
+      TRUE ~ "Other"                             
+    ), alpha = case_when(
+      student_body_2024 > 19300 ~ 1,           
+      rank_2024 <= 23 ~ 1,                   
+      TRUE ~ 0.5
+    )
+  ), shape = 21, size = 2.3) +  
+  scale_fill_manual(
+    values = c("Kyiv" = "gold", "Lviv" = "green", "Other" = "black", "Kharkiv" = "blue", "Sumy" = "lightgreen", "Odesa" = "lightblue", "Dnipro" = "red", "Vinnytsia" = "purple", "Chernivtsi" = "brown" )  
+  ) + 
+  scale_alpha_identity() +
+  theme_minimal() + 
+  labs(
+    x = "Rank 2024"
+    , y = "Number of students"
+    , fill = "Сity"
+    , alpha = "Top uni"
+    , title = "Top 50 universities in Ukrain"
+    , subtitle = "Top 50 universities depends on their location"
   )
 
-ds_school_meta %>% glimpse()
-ds2 %>% glimpse()
+ds4 %>% 
+  group_by(city) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  arrange(desc(count))
 ```
 
 # Graph 1
@@ -295,13 +583,56 @@ The more visible objects are the more students teaching there.
 #| code-summary: Graph 1
 #| warning: false
 
+ds2_scopus <- 
+  ds2 %>% 
+  filter(
+    rank_2024 <= 50,
+    scopus_rank > rank_2024
+  )
+
+ds2_scopus_high_qs <- 
+  ds2_scopus %>% 
+  filter(
+    rank_2024 <= 50,
+    qs_rank < 7
+  )
+ds2_scopus_low_qs <- 
+  ds2_scopus %>% 
+  filter(
+    rank_2024 <= 50,
+    qs_rank == 7
+  )
+
+ds2_rank <- 
+  ds2 %>% 
+  filter(
+    rank_2024 <= 50,
+    rank_2024 > scopus_rank
+  )
+
+ds2_rank_high_qs <- 
+  ds2_rank %>% 
+  filter(
+    rank_2024 <= 50,
+    qs_rank < 7
+  )
+ds2_rank_low_qs <- 
+  ds2_rank %>% 
+  filter(
+    rank_2024 <= 50,
+    qs_rank == 7
+  )
+
 g1 <- 
   ds2 %>% 
+  filter(
+    rank_2024 <= 50
+  ) %>% 
   ggplot(aes(x = rank_2024, y = scopus_rank)) + 
-  geom_point(data = ds2_scopus_low_qs, aes(size = 1 / qs_rank, alpha = number_students), color = "red", shape = 21, fill = "grey", size = 3) +
-  geom_point(data = ds2_scopus_high_qs, aes(size = 1 / qs_rank, alpha = number_students), color = "red", shape = 22, fill = "grey") +
-  geom_point(data = ds2_rank_low_qs, aes(size = 1 / qs_rank, alpha = number_students), color = "blue", shape = 21, fill = "grey", size = 3) +
-  geom_point(data = ds2_rank_high_qs, aes(size = 1 / qs_rank, alpha = number_students), color = "blue", shape = 22, fill = "grey" ) +
+  geom_point(data = ds2_scopus_low_qs, aes(size = 1 / qs_rank, alpha = student_body_2024), color = "red", shape = 21, fill = "grey", size = 3) +
+  geom_point(data = ds2_scopus_high_qs, aes(size = 1 / qs_rank, alpha = student_body_2024), color = "red", shape = 22, fill = "grey") +
+  geom_point(data = ds2_rank_low_qs, aes(size = 1 / qs_rank, alpha = student_body_2024), color = "blue", shape = 21, fill = "grey", size = 3) +
+  geom_point(data = ds2_rank_high_qs, aes(size = 1 / qs_rank, alpha = student_body_2024), color = "blue", shape = 22, fill = "grey" ) +
   #geom_point(data = ds2_kyiv_kpi, shape = 21, fill = "gold", color = "black", size = 5, stroke = 1.5) +  
    guides(alpha = guide_legend(override.aes = list(shape = 21, color = "grey",fill = "grey"))) +
    guides(size = guide_legend(override.aes = list(shape = 22, color = "black", fill = "grey"))) +
