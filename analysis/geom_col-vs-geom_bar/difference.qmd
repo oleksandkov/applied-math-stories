@@ -1,0 +1,127 @@
+---
+title: "Difference"
+author: "Oleksandr Koval"
+format: 
+  html: 
+    toc: true
+    toc-location: right
+editor: visual
+---
+
+# Difference between geom_bar and geom_col
+
+On this page we will see the difference geom_bar and geom_col
+
+# Creating data
+
+```{r}
+#| Label: Preparing
+#| warning: false
+
+
+library(tidyverse)
+library(ggplot2)
+
+b <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) %>% tibble()
+c <- c(19, 37, 58, 9, 12, 35, 72, 15, 15, 13) %>% tibble()
+
+ds0 <- 
+  bind_cols(b, c) %>%  # Use bind_cols instead of cbind
+  setNames(c("x", "y"))  # Rename columns
+
+ds0 %>% 
+  tibble() %>% 
+  glimpse()
+
+
+
+```
+
+# Using geom_bar
+
+## Creating and displaying ds_x
+
+```{r}
+#| Label: Explanation 1
+#| code-summary: How we use geom_bar
+#| results: markup
+
+ds_x <- 
+  ds0 %>% 
+  select(x)
+
+ds_x %>% 
+  ggplot(aes(x = x)) + 
+  geom_bar()
+
+ds_x %>% 
+  group_by(x) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  print(n = Inf)# We can see that in every row in "x" we have only 1 value
+```
+
+We can see that in every row in "x" we have only 1 value
+
+## Creating and displaying ds_y
+
+```{r}
+ds_y <- 
+  ds0 %>% 
+  select(y)
+
+ds_y %>% 
+  ggplot(aes(x = y)) + 
+  geom_bar()
+
+ds_y %>% 
+  group_by(y) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() 
+
+
+
+```
+
+```{r}
+#| Label: Explanation 
+#| code-summary: Explanation
+ds_y %>% 
+  group_by(y) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  filter(count > 1) # We can see that the bar higher where the count of values is 2
+```
+
+We can see that the bar higher where the count of values is 2
+
+**So, if we use geom_bar we can see the relation between column or object and the number of values in this object. In geom_bar using only one argument.**
+
+# Using geom_col
+
+In geom_col we need to use two arguments, because the function is the same as geom_point.
+
+```{r}
+#| Label: Explanation 2
+#| warning: false
+g1 <- 
+ds0 %>% 
+  ggplot(aes(x = x, y = y))+
+  geom_col() # We can see that graph display relation between two arguments: x and y. 
+
+g2 <- 
+ds0 %>% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point() # We can see that graph display relation between two arguments: x and y
+
+g1 
+g2 
+```
+
+We use geom_col to describe the relation between two arguments on the graph. Only thing that is different in g1 and g2 is the way of displaying an information
