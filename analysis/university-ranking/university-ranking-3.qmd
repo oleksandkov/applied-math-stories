@@ -1,0 +1,214 @@
+---
+title: "Example: Combined in Quarto"
+author: "Andriy Koval, Oleksandr Koval"
+format:
+  html:
+    page-layout: full
+    toc: true
+    toc-location: right
+    code-fold: show
+    theme: simplex
+    highlight-style: github
+    colde-line-numbers: true
+    css: styles.css
+    self-contained: true
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+This report examines rankings of Ukrainian universities in 2024 as reported by ... .
+
+# Data
+
+We extract the [data table](https://euroosvita.net/index.php/?category=49&id=8251) with university rankings for 2024 as reported by \[Euro Osvita\]\[https://euroosvita.net\].
+
+```{r}
+#| label: load-data-1
+#| warning: false
+library(tidyverse)
+library(rvest)
+library(ggplot2)
+
+# Specify the URL of the webpage
+url <- "https://euroosvita.net/index.php/?category=49&id=8251"
+
+# Read the HTML content of the webpage
+webpage <- read_html(url)
+
+# Extract the table(s) from the HTML content
+tables <- html_table(webpage, fill = TRUE)
+
+# Access the desired table (may not be the first one)
+ds0 <- tables[[5]] # the focal table of analysis, EUROOSVITA ranks
+```
+
+A [separate page](https://euroosvita.net/index.php/?category=1&id=8252) describes 10 indices used to compile the ranking.
+
+```{r}
+#| label: import-from-google-sheet
+#| code-summary: Importing data from supporting google sheets
+#| results: hide
+#| cache: true
+# we manually copy-paste Table 3 into a google spreadsheet, manually tweak,
+# augment with additional variables, and inport into R.  Consider this workflow,
+# as an alternative for using propriary software such as MS Excel
+library(googlesheets4)
+googlesheets4::gs4_deauth() # to indicate there is no need for a access token
+# By default we will work with public Sheets
+# but see https://googlesheets4.tidyverse.org/ for how to set access to private
+# URL https://docs.google.com/spreadsheets/d/1Ha5JmJRzV1e2ljN3lNLu-pZJwyehJPoKrw9CtMvBMks/edit?usp=sharing
+sheet_name <- "1es_-MBukFcmptQ6IvYmT1Q6kC2ZXHOye0IBPSQbChcQ"
+tab_name1 <- "raw"
+tab_name2 <- "input"
+
+ds_edu_index <- read_sheet(sheet_name,tab_name2,skip = 0)
+spreadsheet_url <- "https://docs.google.com/spreadsheets/d/1es_-MBukFcmptQ6IvYmT1Q6kC2ZXHOye0IBPSQbChcQ/edit?usp=sharing"
+ds_edu_index %>% glimpse()
+
+
+ds_school_meta <- 
+  read_sheet(
+    ss = "1MbTBWkIPMeIIjmLH4Q__TVWUg9y9KqTY34MwWYP0HoM"
+    ,sheet = "Sheet1"
+    ,skip = 0
+) 
+ds_school_meta %>% glimpse()
+
+ds_school_meta2 <- 
+  read_sheet(
+    ss = "1MDc4A-_ueo7a90lxJBzIGE-VsKzwjkOTs7Oi_z1ZRsE"
+    ,sheet = "Sheet2"
+    ,skip = 0
+  ) 
+
+ds_school_meta2 %>% glimpse()
+
+ds_myrank <- 
+  read_sheet(
+    ss = "1_JEO1ygEHbl6Gr5QX4Uj_v2M7J78ZAa283zXRqVD_Ns"
+    ,sheet = "Sheet1"
+    ,skip = 0
+  ) %>% mutate(rank_2024 = rank(index_2024, ties.method = "min")) %>% select(rank_2024, everything())
+
+ds_myrank %>% glimpse()
+```
+
+# Tweak Data 1
+
+```{r}
+#| label: tweak-data-1
+#| code-summary: Wrangle data
+#| results: hide
+
+ds1_school_contex <- 
+  ds_school_meta %>% 
+  left_join(
+    ds_school_meta2 %>% select(-school_name)
+    ,by = "school_id"
+  ) %>% 
+  rename(
+    student_count             = student_body_2024
+    ,department_count         = num_faculty
+    ,program_count            = num_specility     
+    ,application_total_count  = num_requests
+    ,application_budget_count = num_budget
+    ,score_mean               = mean_bal
+  ) 
+ds1_school_contex %>% glimpse()
+
+var_names <- c(
+ "rank_2024"        = "РЕЙТИНГ  2024"
+,"school_name"      = "ЗВО"
+,"index_2024"       = "∑  ІНДЕКСІВ  ЗВО"
+,"qs_rank"          = "Рейтинг  QS"
+,"qs_index"         = "ІНДЕКС  для  QS"
+,"scopus_rank"      = "Рейтинг  Scopus"
+,"scopus_index"     = "ІНДЕКС  для  Scopus"
+,"webometrics_rank" = "Рейтинг  Webometrics"
+,"webometrics_index"= "ІНДЕКС  для  Webometrics"
+,"uimpact_rank"     = "Рейтинг  THE  University  Impact"
+,"uimpact_index"    = "ІНДЕКС  для  THE  University  Impact"
+,"wur_rank"         = "Рейтинг  THE  WUR"
+,"wur_index"        = "ІНДЕКС  для  THE  WUR"
+,"qswur_rank"       = "QS  WUR  Sustainability"
+,"qswur_index"      = "ІНДЕКС  для  QS  WUR  Sustainability"
+,"competition_rank" = "Рейтинг  переможців  наукових  конкурсів"
+,"competition_index"= "ІНДЕКС  для  переможців  наукових  конкурсів"
+,"naqa_rank"        = "Рейтинг  Акредитаційних  справ  НАЗЯВО  2019-2023"
+,"naqa_index"       = "ІНДЕКС  для  Акредитаційних  справ  НАЗЯВО  2019-2023"
+,"patent_rank"      = "Рейтинг  за  кількістю  отриманих  патентів"
+,"patent_index"     = "ІНДЕКС  для  отриманих  патентів"
+,"mean_rank"        = "Середнє  арифметичне  рейтингових  місць  за  Заявами  вступників  та  СКБ"
+,"mean_index"       = "ІНДЕКС  для  Заяв  вступників  та  СКБ"
+)
+
+ds0 %>% glimpse()
+ds_names <- 
+  ds0 %>% slice(1) %>% t() %>% 
+  as_tibble() %>%
+  rename(
+    ua_name = V1
+  ) 
+
+ds1 <- 
+  ds0 %>% 
+  slice(2:nrow(ds0))   # Because it contains the names of the columns
+  
+names(ds1) <- names(var_names)
+ds_names  %>% print(n=nrow(.))
+ds0 %>% glimpse()
+ds1 %>% glimpse()
+```
+
+# Tweek data 2
+
+We can see that the *"index_2024"* directly proportional to *"rank_2024"*
+
+We can see that the *"qs_index"* directly proportional to *"qs_rank"*
+
+Also, the lowest value of *"qs_rank"* is 7
+
+```{r}
+#| label: tweek-data-2
+#| code-summary: Preparing data to use 
+#| warning: false
+#| results: false
+#| code-fold: true
+
+# At this point we have
+ds1 %>% glimpse() # EUROOSVITA source
+ds1_school_contex %>% glimpse()  
+
+convert_to_numeric <- function(x) {
+  # Replace comma with dot
+  x <- gsub(",", ".", x)
+  # Convert to numeric
+  as.numeric(x)
+}
+
+varnames_in_ds1 <- names(ds1)
+varnames_to_convert_to_numeric <- setdiff(varnames_in_ds1, "school_name")
+
+ds2 <- 
+  ds1 %>% 
+  mutate_at(
+    .vars = varnames_to_convert_to_numeric
+    ,.funs = ~convert_to_numeric(.)
+  ) %>% 
+  mutate(
+    school_id = as.integer(rank_2024) # bc that's how we defined ID
+  ) %>% 
+  relocate(school_id) %>% 
+  relocate(school_name,.after = "school_id")
+  
+# ds2 %>% glimpse()
+# ds1_school_contex %>% glimpse()
+
+ds3 <- 
+  ds2 %>% 
+  full_join(
+    ds1_school_contex %>% glimpse()
+  )
+
+ds3 %>% glimpse()
+```
