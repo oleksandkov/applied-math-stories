@@ -81,6 +81,15 @@ ds_school_meta2 <-
   ) 
 
 ds_school_meta2 %>% glimpse()
+
+ds_myrank <- 
+  read_sheet(
+    ss = "1_JEO1ygEHbl6Gr5QX4Uj_v2M7J78ZAa283zXRqVD_Ns"
+    ,sheet = "Sheet1"
+    ,skip = 0
+  ) %>% mutate(rank_2024 = rank(index_2024, ties.method = "min")) %>% select(rank_2024, everything())
+
+ds_myrank %>% glimpse()
 ```
 
 ```{r}
@@ -183,7 +192,16 @@ ds4 <- ds2 %>%
     ,school_name = school_name.y
          ) %>% 
   select(rank_2024,school_name,school_abb, index_2024, student_body_2024,city,oblast,num_requests, mean_bal, num_budget, num_faculty, num_specility, scopus_rank, scopus_index, webometrics_rank, webometrics_index, qs_rank, qs_index, uimpact_rank, uimpact_index, wur_rank, wur_index, qswur_rank, qswur_index, competition_rank, competition_index, patent_rank, patent_index, naqa_rank)
-  
+ds4_myrank <- ds_myrank %>% 
+  slice(1:50) %>% 
+  left_join(ds3, by = "school_name") %>% 
+  select(-rank_2024.x) %>% 
+  rename(
+    rank_2024 = rank_2024.y
+         ) %>% 
+  select(rank_2024,school_name,school_abb, index_2024, student_body_2024,city,oblast,num_requests, mean_bal, num_budget, num_faculty, num_specility, scopus_rank, scopus_index, webometrics_rank, webometrics_index, qs_rank, qs_index, uimpact_rank, uimpact_index, wur_rank, wur_index, qswur_rank, qswur_index, competition_rank, competition_index, patent_rank, patent_index, naqa_rank)
+
+ds4_myrank %>% glimpse()  
 ds4 %>% glimpse()
 ds3 %>% glimpse()  
 ds_school_meta %>% glimpse()
@@ -505,6 +523,21 @@ ds2 %>%
 # 8 == Competition rank
 # 9 == Patent rank
 # 10 == Naqa rank
+
+# Adding a personal index to each rank:
+# Scopus index = 0.2
+# Webometrics = 0.15
+# Mean index = 0.1
+# QS index = 0.12
+# University impact = 0.07
+# Wur = 0.11
+# QS wur = 0.05
+# Competition index = 0.06
+# Patent index = 0.1
+# Naqa index = 0.04
+#
+#
+
 #------ Information------
 
 # Tools for exploring distributions of ranks and indices:
@@ -563,6 +596,78 @@ ds4 %>%
   ungroup() %>% 
   arrange(desc(count))
 ```
+# Graph 3
+```{r}
+#| label: graph-3
+#| code-fold: true
+#| results: hold
+#| code-summary: Graph 3
+#| warning: false
+
+kpi <- 
+  ds4 %>% 
+  slice(1)
+kpi %>% glimpse()
+knu <- 
+  ds4 %>% 
+  slice(2)
+knu %>% glimpse()
+vntu <- 
+  ds4 %>% 
+  slice(23)
+vntu %>% glimpse()
+g3 <- 
+  ds4 %>% 
+  filter(is.finite(num_requests), is.finite(num_budget)) %>% 
+  ggplot(aes(x = num_requests, y = num_budget)) +
+  geom_smooth(method = "lm", linetype = "dashed", alpha = 0.1, se = FALSE, color = "lightblue") + 
+  geom_point() +
+  geom_point(data = kpi, color = "black", shape = 21, fill = "gold", size = 3) + 
+  geom_point(data = knu, shape = 21, size =3, fill = "green", color = "black") + 
+  geom_point(data = vntu, shape = 21, size = 3, fill = "blue", color = "black") +
+    geom_vline(xintercept = 19181, color = "red", linetype = "dashed")+
+    geom_vline(xintercept = 29812, color = "red", linetype = "dashed")+
+  scale_x_reverse() +
+  theme_minimal() + 
+  labs(
+     x = "Number of Requests"
+     , y = "Number of Requests on budget place"
+  )
+g3
+```
+# Graph 4 with ds4_myrank
+```{r}
+#| label: graph-4
+#| code-fold: true
+#| results: hold
+#| code-summary: Graph 4
+#| warning: false
+
+ds4_myrank %>%
+  slice(1:23) %>%
+  ggplot(aes(y = index_2024, x = school_abb)) +
+  geom_col() +  # Plot all bars
+  geom_col(data = kpi, color = "black", fill = "gold") +  # Highlight KPI group
+  geom_col(data = knu, fill = "green", color = "black") + # Highlight KNU group
+  geom_col(data = vntu, fill = "blue", color = "black") + # Highlight VNTU group
+  scale_x_discrete(
+    "School Abbreviations",
+    labels = function(x) ifelse(x %in% c("VNTU", "KPI", "KNUTS"), x, "")
+  )
+ds4 %>% 
+  slice(1:23) %>% 
+  ggplot(aes(y=index_2024, x=school_abb)) +
+  geom_col() +
+  geom_col(data = kpi, color = "black", fill = "gold") + 
+  geom_col(data = knu,   fill = "green", color = "black") + 
+  geom_col(data = vntu,  fill = "blue", color = "black") + 
+  scale_x_discrete("School Abbreviations", 
+                   labels = function(x) ifelse(x %in% c("VNTU","KPI", "KNUTS", "NPhU"), x, ""))
+
+
+
+```
+
 
 # Graph 1
 
