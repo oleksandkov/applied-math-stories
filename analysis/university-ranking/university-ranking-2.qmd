@@ -535,8 +535,6 @@ ds2 %>%
 # Competition index = 0.06
 # Patent index = 0.1
 # Naqa index = 0.04
-#
-#
 
 #------ Information------
 
