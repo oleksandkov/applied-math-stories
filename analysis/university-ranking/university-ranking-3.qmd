@@ -172,12 +172,12 @@ Also, the lowest value of *"qs_rank"* is 7
 #| label: tweek-data-2
 #| code-summary: Preparing data to use 
 #| warning: false
-#| results: false
+#| results: hold
 #| code-fold: true
 
 # At this point we have
 ds1 %>% glimpse() # EUROOSVITA source
-ds1_school_contex %>% glimpse()  
+ds1_school_contex %>% glimpse()
 
 convert_to_numeric <- function(x) {
   # Replace comma with dot
@@ -188,6 +188,7 @@ convert_to_numeric <- function(x) {
 
 varnames_in_ds1 <- names(ds1)
 varnames_to_convert_to_numeric <- setdiff(varnames_in_ds1, "school_name")
+
 
 ds2 <- 
   ds1 %>% 
@@ -202,13 +203,66 @@ ds2 <-
   relocate(school_name,.after = "school_id")
   
 # ds2 %>% glimpse()
-# ds1_school_contex %>% glimpse()
+ds1_school_contex %>% glimpse()
 
 ds3 <- 
-  ds2 %>% 
-  full_join(
-    ds1_school_contex %>% glimpse()
+  ds2 %>%
+  left_join(
+    ds1_school_contex %>% select(-school_name, -rank_2024)
+    ,by = "school_id"
   )
 
 ds3 %>% glimpse()
 ```
+
+# Explore
+
+```{r}
+#| code-summary: graph 1
+#| 
+
+# what university has the highest demand for budget places? 
+ds3 %>% glimpse()
+d1 <- 
+  ds3 %>% 
+  mutate(
+    budget_ratio = application_budget_count/ application_total_count
+  )
+d1
+
+g1 <- 
+  d1 %>% 
+  ggplot(aes(x=score_mean, y = budget_ratio, color = oblast))+
+  # scale_x_continuous(limits = c(0,51))
+  geom_point()+
+  labs(
+    title  = "Relationship between average submitted score and share of application for public funding"
+    ,x = "Mean score of the application"
+    ,y = "Share of application for public fundtion"
+  )
+g1
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
