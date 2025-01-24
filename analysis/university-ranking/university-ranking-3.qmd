@@ -19,6 +19,14 @@ editor_options:
 
 This report examines rankings of Ukrainian universities in 2024 as reported by ... .
 
+```{r}
+library(tidyverse)
+library(rvest)
+library(ggplot2)
+library(magrittr)
+```
+
+
 # Data
 
 We extract the [data table](https://euroosvita.net/index.php/?category=49&id=8251) with university rankings for 2024 as reported by \[Euro Osvita\]\[https://euroosvita.net\].
@@ -26,9 +34,7 @@ We extract the [data table](https://euroosvita.net/index.php/?category=49&id=825
 ```{r}
 #| label: load-data-1
 #| warning: false
-library(tidyverse)
-library(rvest)
-library(ggplot2)
+#| cache: true
 
 # Specify the URL of the webpage
 url <- "https://euroosvita.net/index.php/?category=49&id=8251"
@@ -92,6 +98,7 @@ ds_myrank <-
   ) %>% mutate(rank_2024 = rank(index_2024, ties.method = "min")) %>% select(rank_2024, everything())
 
 ds_myrank %>% glimpse()
+
 ```
 
 # Tweak Data 1
@@ -100,6 +107,7 @@ ds_myrank %>% glimpse()
 #| label: tweak-data-1
 #| code-summary: Wrangle data
 #| results: hide
+#| cache: true
 
 ds1_school_contex <- 
   ds_school_meta %>% 
@@ -175,6 +183,7 @@ Also, the lowest value of *"qs_rank"* is 7
 #| warning: false
 #| results: hold
 #| code-fold: true
+#| cache: true
 
 # At this point we have
 ds1 %>% glimpse() # EUROOSVITA source
@@ -218,28 +227,110 @@ ds3 %>% glimpse()
 
 # Explore
 
-```{r}
-#| code-summary: graph 1
-#| 
 
-# what university has the highest demand for budget places? 
-ds3 %>% glimpse()
+```{r}
+#| code-summary: compute total application
+#| echo: false
+total_application_2023 <- ds_school_meta2 %>% summarize(n = sum(num_requests)) %>% pull(n) 
+```
+
+
+In 2023 Ukrainian universities received the of `r scales::comma(total_application_2023)` applications according to https://vstup.edbo.gov.ua/. 
+
+
+```{r}
+#| echo: false
+# ds3 %>% glimpse()
+top50_prop <- 
+  ds3 %>% 
+  filter(school_id <= 50 ) %>% 
+  mutate(
+    application_total_prop = application_total_count/total_application_2023
+  ) %>% 
+  select(school_id, school_abb, application_total_count, application_total_prop) %>% 
+  summarize(
+    top50_prop = sum(application_total_prop)
+  ) %>% 
+  pull(top50_prop)
+```
+
+Top 50 universities (according to Euro Osvita ranking) received `r scales::percent(top50_prop)` of all applications submitted that year.
+
+Among these 50, are there universities that stand out by the number of applications received? How is that related to the overall rank? 
+
+```{r}
+#| code-summary: Index vs total applications
+#| label: g1
+#| code-fold: true
+#| fig.width: 9
+#| fig.height: 6
+
 d1 <- 
   ds3 %>% 
   mutate(
-    budget_ratio = application_budget_count/ application_total_count
-  )
-d1
+    top4 = case_when(
+      application_total_count > 25000 ~ TRUE
+      ,TRUE ~ FALSE
+    )
+  ) %>% 
+  filter(!is.na(region))
 
 g1 <- 
   d1 %>% 
-  ggplot(aes(x=score_mean, y = budget_ratio, color = oblast))+
-  # scale_x_continuous(limits = c(0,51))
-  geom_point()+
+  ggplot(aes(x = index_2024, y = application_total_count, fill = region))+
+  geom_point(size = 4, shape = 21, color = "black", alpha = .6)+
+  # geom_text(aes(label = school_abb))+
+  ggrepel::geom_text_repel(
+    aes(label = school_abb)
+    ,data = . %>% filter(top4)
+    ,min.segment.length = .1
+  )+
+  # scale_color_manual(values = c("TRUE"="red","FALSE"="black"))+
+  scale_x_continuous(
+    limits = c(0, 30)
+    ,minor_breaks = seq(0, 30, 2)
+  )+
+  scale_y_continuous(
+    labels = scales::comma_format()
+    ,breaks = seq(0,30000,10000)
+    ,minor_breaks = seq(0, 30000, 2000)
+  )+
   labs(
-    title  = "Relationship between average submitted score and share of application for public funding"
-    ,x = "Mean score of the application"
-    ,y = "Share of application for public fundtion"
+    title = "University index and total number of applications"
+    ,y = "Total number of Application in 2023"
+    ,x = "University index according to EuroOsvita"
+  )+
+  guides(
+    fill = guide_legend(override.aes = list(size = 5)) # Adjust line thickness in legend
+  )+
+  labs(
+    fill = "Region"
   )
 g1
+```
+
+
+
+```{r}
+
+# # what university has the highest demand for budget places? 
+# ds3 %>% glimpse()
+# d1 <- 
+#   ds3 %>% 
+#   mutate(
+#     budget_ratio = application_budget_count/ application_total_count
+#   )
+# d1
+# 
+# g1 <- 
+#   d1 %>% 
+#   ggplot(aes(x=score_mean, y = budget_ratio, color = oblast))+
+#   # scale_x_continuous(limits = c(0,51))
+#   geom_point()+
+#   labs(
+#     title  = "Relationship between average submitted score and share of application for public funding"
+#     ,x = "Mean score of the application"
+#     ,y = "Share of application for public fundtion"
+#   )
+# g1
 ```
