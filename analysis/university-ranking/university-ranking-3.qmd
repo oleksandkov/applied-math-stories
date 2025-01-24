@@ -16,6 +16,7 @@ editor: visual
 editor_options: 
   chunk_output_type: console
 ---
+
 This report examines rankings of Ukrainian universities in 2024 as reported by ... .
 
 # Data
@@ -242,27 +243,3 @@ g1 <-
   )
 g1
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
