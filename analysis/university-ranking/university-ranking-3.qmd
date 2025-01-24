@@ -228,6 +228,8 @@ ds3 %>% glimpse()
 # Explore
 
 
+## Application count
+
 ```{r}
 #| code-summary: compute total application
 #| echo: false
@@ -309,6 +311,56 @@ g1 <-
 g1
 ```
 
+
+We suspect that the size of the city in which the university is located will influence the number of application submitted to that university. Let's test this hypothesis. 
+
+
+```{r}
+ds3 %>% glimpse()
+d2 <- 
+  ds3 %>% 
+  filter(school_id <= 50) %>% 
+  select(school_id, school_abb, student_count, application_total_count, city_population, city ) %>% 
+  mutate(
+    student_body_pct_city = student_count / city_population
+    ,application_pct_city = application_total_count/ city_population
+  )
+
+d2
+
+g2 <- 
+  d2 %>% 
+  ggplot(aes(x=city_population, y = student_count))+
+  geom_point()
+# Homework: isolate the largest university (student_count) visually and add the 
+# ggrepel labels to them in the same way we did in graph 1. 
+# it looks like the size of the city does not influence the size of the student body
+g2
+
+
+  d2 %>% 
+  ggplot(aes(x=city_population, y = application_total_count))+
+  geom_point()
+# it looks like the size of the city does not influece the number of applications recieved by a university
+# it looks like the size of the city does not influece the number of applications recieved by a university
+  d2 %>% 
+  ggplot(aes(x=city_population, y = student_body_pct_city))+
+  geom_point()
+  
+  d2 %>% 
+  ggplot(aes(x=city_population, y = application_pct_city))+
+  geom_point()
+  
+  
+  ds3 %>% 
+    ggplot(aes(student_count, y = application_total_count, fill = region, size = city_population))+
+    geom_point(shape = 21, color = "black", alpha = .5)+
+    guides(
+      fill = guide_legend(override.aes = list(size = 5)) # Adjust line thickness in legend
+    )+
+    facet_wrap(facets = "region", scales = "free")
+  
+```
 
 
 ```{r}
