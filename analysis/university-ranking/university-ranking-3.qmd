@@ -220,6 +220,9 @@ ds3 <-
   left_join(
     ds1_school_contex %>% select(-school_name, -rank_2024)
     ,by = "school_id"
+  ) %>% 
+  mutate(
+    application_total_count = as.numeric(application_total_count)
   )
 
 ds3 %>% glimpse()
@@ -247,7 +250,10 @@ top50_prop <-
   ds3 %>% 
   filter(school_id <= 50 ) %>% 
   mutate(
-    application_total_prop = application_total_count/total_application_2023
+    application_total_count = as.numeric(application_total_count)
+  ) %>% 
+  mutate(
+    application_total_prop = as.numeric(application_total_count)/total_application_2023
   ) %>% 
   select(school_id, school_abb, application_total_count, application_total_prop) %>% 
   summarize(
@@ -319,24 +325,61 @@ We suspect that the size of the city in which the university is located will inf
 ds3 %>% glimpse()
 d2 <- 
   ds3 %>% 
+  mutate(
+    student_count = as.numeric(student_count)
+  ) %>% 
   filter(school_id <= 50) %>% 
-  select(school_id, school_abb, student_count, application_total_count, city_population, city ) %>% 
+  select(school_id, school_abb, student_count, application_total_count, city_population, city, region) %>% 
   mutate(
     student_body_pct_city = student_count / city_population
     ,application_pct_city = application_total_count/ city_population
+  ) %>% 
+mutate(
+  top5 = case_when(
+    student_count > 30000 & city_population > 2000000 ~ TRUE,
+    TRUE ~ FALSE
   )
+)
 
 d2
 
 g2 <- 
   d2 %>% 
-  ggplot(aes(x=city_population, y = student_count))+
-  geom_point()
+  ggplot(aes(x=city_population, y = student_count, fill = region))+
+  geom_point(size = 4, shape = 21, color = "black")+
+  ggrepel::geom_text_repel(
+    aes(label = school_abb)
+    ,data = . %>% filter(top5)
+    ,min.segment.length = .1
+  ) + 
+  scale_x_continuous(
+        labels = scales::comma_format()
+        ,breaks = c(seq(0, 3000000, 1000000), 500000, 700000, 1500000)
+        ,minor_breaks = seq(0, 3000000, 500000)
+  ) +
+  scale_y_continuous(
+            labels = scales::comma_format()
+            ,breaks = seq(0, 40000, 5000)
+  ) + 
+  labs(
+    x = "Population of city"
+    ,y = "Number of studetns who study there"
+    , title = "City population and number of students in university"
+    ,fill = "Region"
+  ) + 
+  theme_minimal()
+g2
 # Homework: isolate the largest university (student_count) visually and add the 
 # ggrepel labels to them in the same way we did in graph 1. 
 # it looks like the size of the city does not influence the size of the student body
 g2
-
+ds3 %>% 
+  group_by(city, city_population) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  ungroup() %>% 
+  print(n = Inf)
 
   d2 %>% 
   ggplot(aes(x=city_population, y = application_total_count))+
