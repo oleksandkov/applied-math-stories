@@ -26,7 +26,6 @@ library(ggplot2)
 library(magrittr)
 ```
 
-
 # Data
 
 We extract the [data table](https://euroosvita.net/index.php/?category=49&id=8251) with university rankings for 2024 as reported by \[Euro Osvita\]\[https://euroosvita.net\].
@@ -230,7 +229,6 @@ ds3 %>% glimpse()
 
 # Explore
 
-
 ## Application count
 
 ```{r}
@@ -239,9 +237,7 @@ ds3 %>% glimpse()
 total_application_2023 <- ds_school_meta2 %>% summarize(n = sum(num_requests)) %>% pull(n) 
 ```
 
-
-In 2023 Ukrainian universities received the of `r scales::comma(total_application_2023)` applications according to https://vstup.edbo.gov.ua/. 
-
+In 2023 Ukrainian universities received the of `r scales::comma(total_application_2023)` applications according to https://vstup.edbo.gov.ua/.
 
 ```{r}
 #| echo: false
@@ -264,7 +260,7 @@ top50_prop <-
 
 Top 50 universities (according to Euro Osvita ranking) received `r scales::percent(top50_prop)` of all applications submitted that year.
 
-Among these 50, are there universities that stand out by the number of applications received? How is that related to the overall rank? 
+Among these 50, are there universities that stand out by the number of applications received? How is that related to the overall rank?
 
 ```{r}
 #| code-summary: Index vs total applications
@@ -317,11 +313,10 @@ g1 <-
 g1
 ```
 
-
-We suspect that the size of the city in which the university is located will influence the number of application submitted to that university. Let's test this hypothesis. 
-
+We suspect that the size of the city in which the university is located will influence the number of application submitted to that university. Let's test this hypothesis visually.
 
 ```{r}
+#|echo: true
 ds3 %>% glimpse()
 d2 <- 
   ds3 %>% 
@@ -369,10 +364,14 @@ g2 <-
   ) + 
   theme_minimal()
 g2
-# Homework: isolate the largest university (student_count) visually and add the 
-# ggrepel labels to them in the same way we did in graph 1. 
-# it looks like the size of the city does not influence the size of the student body
-g2
+```
+We do not observe a linear relationship between these two variables. 
+
+
+```{r}
+#| eval: FALSE
+#| lable: draft1
+# DRAFT
 ds3 %>% 
   group_by(city, city_population) %>% 
   summarise(
@@ -402,11 +401,56 @@ ds3 %>%
       fill = guide_legend(override.aes = list(size = 5)) # Adjust line thickness in legend
     )+
     facet_wrap(facets = "region", scales = "free")
-  
 ```
 
+# Geography of Education
 
 ```{r}
+#| code-fold: true
+#| code-summary: share of students
+#| fig-width: 16
+#| fig-height: 10
+
+#| warning: false
+
+# ds3 %>% glimpse()
+# What cities are present in the data? (42)
+# How many universities are in each city? (1-43)
+# How many students are in each city/regions ()
+# What percent of city's population are students? 
+d1 <-
+  ds3 %>% 
+  group_by(region, oblast, city) %>%
+  # group_by(oblast) %>%
+  summarize(
+    school_count = n_distinct(school_id)
+    ,student_count = sum(student_count, na.rm = T)
+  ) %>% 
+  arrange(desc(school_count))
+
+d_city_pop <- 
+  ds3 %>% 
+  distinct(city, city_population )
+
+d2 <- 
+  d1 %>% 
+  left_join(d_city_pop) %>% 
+  ungroup() %>% 
+  mutate(
+    pop_student_prop = student_count/city_population
+  )
+
+# d2 %>% print(n=Inf)
+
+g1 <- 
+  d2 %>% 
+  filter(! city %in% c("Kyiv","Pokrovsk") ) %>% 
+  ggplot(aes(x = city_population, y = pop_student_prop, fill = region ))+
+  geom_point(shape = 21, color = "black", alpha = .5, size = 4) +
+  facet_wrap(facets = "region", scales = "free_x")+
+  scale_x_continuous(labels = scales::comma_format(scale = 1000, prefix = "M"))+
+  ggrepel::geom_text_repel(aes(label = city),max.overlaps = 30)
+g1
 
 # # what university has the highest demand for budget places? 
 # ds3 %>% glimpse()
