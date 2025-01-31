@@ -84,7 +84,7 @@ ds_school_meta %>% glimpse()
 ds_school_meta2 <- 
   read_sheet(
     ss = "1MDc4A-_ueo7a90lxJBzIGE-VsKzwjkOTs7Oi_z1ZRsE"
-    ,sheet = "Sheet2"
+    ,sheet = "edu-base"
     ,skip = 0
   ) 
 
@@ -328,7 +328,7 @@ d2 <-
   mutate(
     student_count = as.numeric(student_count)
   ) %>% 
-  filter(school_id <= 50) %>% 
+  #filter(school_id <= 50) %>% 
   select(school_id, school_abb, student_count, application_total_count, city_population, city, region) %>% 
   mutate(
     student_body_pct_city = student_count / city_population
