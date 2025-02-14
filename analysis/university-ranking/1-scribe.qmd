@@ -51,7 +51,7 @@ tables <- html_table(webpage, fill = TRUE)
 ds0 <- tables[[5]] # the focal table of analysis, EUROOSVITA ranks
 ```
 
-A [separate page](https://euroosvita.net/index.php/?category=1&id=8252) from the same source describes 10 indices used to compile the ranking. 
+A [separate page](https://euroosvita.net/index.php/?category=1&id=8252) from the same source describes 10 indices used to compile the ranking.
 
 ```{r}
 #| label: import-from-google-sheet
@@ -119,11 +119,11 @@ ds_myrank %>% glimpse()
 
 ```
 
-# Tweak Data 
+# Tweak Data
 
 ## Tweak 1
 
-Here we rename indices for the use with English speakers and organize measured dimensions. 
+Here we rename indices for the use with English speakers and organize measured dimensions.
 
 ```{r}
 #| label: tweak-data-1
@@ -195,11 +195,11 @@ ds1 %>% glimpse()
 
 Now we can make a few observations that should instruct further transformation.
 
-- We can see that the *"index_2024"* directly proportional to *"rank_2024"*
+-   We can see that the *"index_2024"* directly proportional to *"rank_2024"*
 
-- We can see that the *"qs_index"* directly proportional to *"qs_rank"*
+-   We can see that the *"qs_index"* directly proportional to *"qs_rank"*
 
-- Also, the lowest value of *"qs_rank"* is 7
+-   Also, the lowest value of *"qs_rank"* is 7
 
 ```{r}
 #| label: tweek-data-2
@@ -242,7 +242,7 @@ ds2 %>% glimpse()
 
 ## Tweak 2
 
-Here we augment the main table (university rankings from EuroOsvita) with data from other sources to create a rich data set to be passed for further exploration and analysis. 
+Here we augment the main table (university rankings from EuroOsvita) with data from other sources to create a rich data set to be passed for further exploration and analysis.
 
 ```{r}
 ds3 <- 
@@ -260,13 +260,21 @@ ds3 %>% glimpse()
 
 # Save to Disk
 
-Store data on disk to create a single point of departure for all subsequent analytic reports. 
+Store data on disk to create a single point of departure for all subsequent analytic reports.
 
 ```{r}
 #| label: save-to-disk
 #| code-summary: Save prepared data to disk
 
 getwd()
-# ds3 %>% readr::write_rds("./data-private/derived/university-ranking/1-scribe-ds3.rds")
-```
+ ds3 %>% readr::write_rds("../../data-private/derived/university-ranking/1-scribe-ds3.rds")
+ dir_path <- "../../data-private/derived/university-ranking/"
 
+if (!dir.exists(dir_path)) {
+  dir.create(dir_path, recursive = TRUE)  # Create directories if missing
+}
+
+readr::write_rds(ds3, file.path(dir_path, "1-scribe-ds3.rds"))
+print("File saved successfully!")
+
+```
