@@ -18,6 +18,14 @@ editor_options:
 ---
 
 ```{r}
+#| code-summary: "Load packages"
+#| results: hide
+#| message: false
+#| warning: false
+#| code-fold: true
+
+
+
 library(tidyverse)
 library(ggplot2)
 library(dplyr)
@@ -31,21 +39,23 @@ getwd()
 summary(ds3)
 ```
 
-# Analyzing Top 50 Universities 
+# Analyzing Top 50 Universities
 
 We focus on the subset containing the top 50 universities according to EuroOsvita ranking for 2024.
 
 # 1 - Applications and rank
+
 Among these 50, are there universities that stand out by the number of applications received? How is that related to the overall rank?
 
-There are four universities that stand out(KPI, LKPI, LNU, KNUTS). There are all at the top of the ranking list and received substantially larger number of applications than any other universities. 
+There are four universities that stand out(KPI, LKPI, LNU, KNUTS). There are all at the top of the ranking list and received substantially larger number of applications than any other universities.
 
 ```{r}
-#| code-summary: Index vs total applications
 #| label: g1
+#| code-summary: Index vs total applications
 #| code-fold: true
-#| fig.width: 9
-#| fig.height: 6
+#| fig.width: 11
+#| fig.height: 7
+#| warning: false
 
 d1 <- 
   ds3 %>% 
@@ -96,15 +106,24 @@ g1
 
 We suspect that the size of the city in which the university is located will influence the number of application submitted to that university. Let's test this hypothesis visually.
 
-We will consider  2 cases:
+We will consider 2 cases:
 
 1 - Full sample of 200 universities
 
 2 - Sub-sample of Top 50 universities
 
 ```{r}
-#|echo: true
-ds3 %>% glimpse() 
+#| label: prepering-data
+#| code-summary: "Prepering data"
+#| code-fold: true 
+#| fig.width: 11
+#| fig.height: 7
+#| results: hide
+#| warning: false
+
+
+
+# ds3 %>% glimpse() 
 d2 <- 
   ds3 %>% 
   # filter(school_id <= 50) %>%
@@ -119,11 +138,21 @@ mutate(
     TRUE ~ FALSE
   )
 )
-d2
 
 d21 <- 
   d2 %>%  
   filter(school_id <= 50) 
+```
+
+```{r}
+#| label: g2
+#| code-summary: "Making graphs"
+#| code-fold: true
+#| fig.width: 11
+#| fig.height: 7
+#| results: markup
+#| warning: false
+#| echo: true
 
 g2 <- 
   d21 %>% 
@@ -187,17 +216,26 @@ We do not observe a clear linear relationship between these two variables. Unive
 We will see the different relationship in each region of Ukraine between university's number of students and number of applications.
 
 But generally we observe a positive relationship: larger universities receive more applications.
+
 ```{r}
-#| eval: FALSE
 #| lable: draft1
+#| code-summary: Making graph
+#| code-fold: true
+#| fig.width: 11
+#| fig.height: 7
+#| results: hold
+#| warning: false
+
+
+
 # DRAFT
-ds3 %>% 
-  group_by(region, oblast, city, city_population) %>% 
-  summarise(
-    count = n()
-  ) %>% 
-  ungroup() %>%
-  knitr::kable()
+# ds3 %>% 
+#   group_by(region, oblast, city, city_population) %>% 
+#   summarise(
+#     count = n()
+#   ) %>% 
+#   ungroup() %>%
+#   knitr::kable()
 
 #   d2 %>% 
 #   ggplot(aes(x=city_population, y = application_total_count))+
@@ -213,25 +251,28 @@ ds3 %>%
 #   geom_point()
 #   
   
-  ds3 %>% 
+g3 <-   
+ ds3 %>% 
     ggplot(aes(student_count, y = application_total_count, fill = region, size = city_population))+
     geom_point(shape = 21, color = "black", alpha = .5)+
     guides(
       fill = guide_legend(override.aes = list(size = 5)) # Adjust line thickness in legend
     )+
     facet_wrap(facets = "region", scales = "free")
+g3
 ```
 
 # 4 - Geography of Education
-Let as examine the ratio of student bodies to the population of the cities in which universities are located. 
+
+Let as examine the ratio of student bodies to the population of the cities in which universities are located.
 
 ```{r}
+#| label: preparing-data-2
+#| code-summary: Preparing data
 #| code-fold: true
-#| code-summary: share of students
-#| fig-width: 16
-#| fig-height: 10
-
+#| results: hide
 #| warning: false
+
 
 # ds3 %>% glimpse()
 # What cities are present in the data? (42)
@@ -263,16 +304,16 @@ d2 <-
   )
 
 # d2 %>% print(n=Inf)
+```
 
-g1 <- 
-  d2 %>% 
-  filter(! city %in% c("Kyiv","Pokrovsk") ) %>% # Outliers
-  ggplot(aes(x = city_population, y = pop_student_prop, fill = region ))+
-  geom_point(shape = 21, color = "black", alpha = .5, size = 4) +
-  facet_wrap(facets = "region", scales = "free_x")+
-  scale_x_continuous(labels = scales::comma_format(scale = 1000, prefix = "M"))+
-  ggrepel::geom_text_repel(aes(label = city),max.overlaps = 30)
-g1
+```{r}
+#| label: g4
+#| code-summary: Making graph
+#| code-fold: true
+#| fig.width: 11
+#| fig.height: 7
+#| results: hold
+#| warning: false
 
 # # what university has the highest demand for budget places? 
 # ds3 %>% glimpse()
@@ -293,7 +334,25 @@ g1
 #     ,x = "Mean score of the application"
 #     ,y = "Share of application for public fundtion"
 #   )
-# g1
+# g1 
+g1 <- 
+  d2 %>% 
+  filter(! city %in% c("Kyiv","Pokrovsk") ) %>% # Outliers
+  ggplot(aes(x = city_population, y = pop_student_prop, fill = region ))+
+  geom_point(shape = 21, color = "black", alpha = .5, size = 4) +
+  facet_wrap(facets = "region", scales = "free_x")+
+  scale_x_continuous(labels = scales::comma_format(scale = 1000, prefix = "M"))+
+  ggrepel::geom_text_repel(aes(label = city),max.overlaps = 30)
+g1
+
 
 
 ```
+
+We can observe that:
+
+-   North have the lowest percentage of students to city population (except Pereiaslav)
+
+-   The population of the city does not affected to percentage of students
+
+-   In the Center and West there are cities with the biggest percentage (except Kyiv)
