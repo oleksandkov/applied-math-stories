@@ -1,6 +1,6 @@
 # Applied Math Stories
 Website collecting interesting stories in applied math 
-# Stories 
+# Miscellaneous Stories 
 
 - [Length of solar day in Vinnytsia](https://raw.githack.com/olesandr-k/applied-math-stories/refs/heads/main/analysis/solar-day/solar-day-vinnytsia.html)
 
