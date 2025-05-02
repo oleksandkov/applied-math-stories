@@ -1,7 +1,7 @@
 ---
 title: "UA Universities"
 subitle: "Data preparation"
-author: "Andriy Koval, Oleksandr Koval"
+author: "Oleksandr Koval, Andriy Koval"
 format:
   html:
     page-layout: full
@@ -51,7 +51,7 @@ tables <- html_table(webpage, fill = TRUE)
 ds0 <- tables[[5]] # the focal table of analysis, EUROOSVITA ranks
 ```
 
-A [separate page](https://euroosvita.net/index.php/?category=1&id=8252) from the same source describes 10 indices used to compile the ranking. 
+A [separate page](https://euroosvita.net/index.php/?category=1&id=8252) from the same source describes 10 indices used to compile the ranking.
 
 ```{r}
 #| label: import-from-google-sheet
@@ -119,11 +119,11 @@ ds_myrank %>% glimpse()
 
 ```
 
-# Tweak Data 
+# Tweak Data
 
 ## Tweak 1
 
-Here we rename indices for the use with English speakers and organize measured dimensions. 
+Here we rename indices for the use with English speakers and organize measured dimensions.
 
 ```{r}
 #| label: tweak-data-1
@@ -179,27 +179,28 @@ ds_names <-
   as_tibble() %>%
   rename(
     ua_name = V1
-  ) 
+  ) %>% print()
 
 ds1 <- 
   ds0 %>% 
-  slice(2:nrow(ds0))   # Because it contains the names of the columns
+  slice(2:nrow(ds0)) %>%   # Because it contains the names of the columns
+  print()
   
 names(ds1) <- names(var_names)
 ds_names  %>% print(n=nrow(.))
-ds0 %>% glimpse()
-ds1 %>% glimpse()
+# ds0 %>% glimpse()
+# ds1 %>% glimpse()
 ```
 
 ## Tweak 2
 
 Now we can make a few observations that should instruct further transformation.
 
-- We can see that the *"index_2024"* directly proportional to *"rank_2024"*
+-   We can see that the *"index_2024"* directly proportional to *"rank_2024"*
 
-- We can see that the *"qs_index"* directly proportional to *"qs_rank"*
+-   We can see that the *"qs_index"* directly proportional to *"qs_rank"*
 
-- Also, the lowest value of *"qs_rank"* is 7
+-   Also, the lowest value of *"qs_rank"* is 7
 
 ```{r}
 #| label: tweek-data-2
@@ -211,7 +212,7 @@ Now we can make a few observations that should instruct further transformation.
 
 # At this point we have
 ds1 %>% glimpse() # EUROOSVITA source
-ds1_school_contex %>% glimpse()
+ds1_school_contex %>% glimpse() # manually-assembled data from other sources
 
 convert_to_numeric <- function(x) {
   # Replace comma with dot
@@ -242,7 +243,7 @@ ds2 %>% glimpse()
 
 ## Tweak 2
 
-Here we augment the main table (university rankings from EuroOsvita) with data from other sources to create a rich data set to be passed for further exploration and analysis. 
+Here we augment the main table (university rankings from EuroOsvita) with data from other sources to create a rich data set to be passed for further exploration and analysis.
 
 ```{r}
 ds3 <- 
@@ -260,13 +261,11 @@ ds3 %>% glimpse()
 
 # Save to Disk
 
-Store data on disk to create a single point of departure for all subsequent analytic reports. 
+Store data on disk to create a single point of departure for all subsequent analytic reports.
 
 ```{r}
 #| label: save-to-disk
 #| code-summary: Save prepared data to disk
-
-getwd()
-# ds3 %>% readr::write_rds("./data-private/derived/university-ranking/1-scribe-ds3.rds")
+ds3 %>% readr::write_rds("../../data-private/derived/university-ranking/1-scribe-ds3.rds")
+ds3 %>% readr::write_csv("../../data-private/derived/university-ranking/1-scribe-ds3.csv")
 ```
-
