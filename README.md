@@ -18,6 +18,6 @@ A series of data explorations into rankings of Ukrainian universities in 2024. W
 
 ### Unstructed Explorations 
 
-- [2-eda-1](https://raw.githack.com/olesandr-k/applied-math-stories/main/analysis/university-ranking/2-eda-1.html)
+- [2-eda-1](https://raw.githack.com/olesandr-k/applied-math-stories/main/analysis/university-ranking/2-eda-1.html) - Applications and rank. Location is important? Student and application counts. Geography of Education.
 
-- [2-eda-2](https://raw.githack.com/olesandr-k/applied-math-stories/main/analysis/university-ranking/2-eda-2.html)
+- [2-eda-2](https://raw.githack.com/olesandr-k/applied-math-stories/main/analysis/university-ranking/2-eda-2.html) - Univariate distributions of key metrics of university performance 
