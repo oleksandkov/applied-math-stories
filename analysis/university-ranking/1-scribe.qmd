@@ -266,6 +266,15 @@ Store data on disk to create a single point of departure for all subsequent anal
 ```{r}
 #| label: save-to-disk
 #| code-summary: Save prepared data to disk
-ds3 %>% readr::write_rds("../../data-private/derived/university-ranking/1-scribe-ds3.rds")
-ds3 %>% readr::write_csv("../../data-private/derived/university-ranking/1-scribe-ds3.csv")
+
+dir_path <- "../../data-private/derived/university-ranking/"
+
+if (!dir.exists(dir_path)) {
+  dir.create(dir_path, recursive = TRUE)  # Create directories if missing
+}
+
+readr::write_rds(ds3, file.path(dir_path, "1-scribe-ds3.rds"))
+readr::write_csv(ds3, file.path(dir_path, "1-scribe-ds3.csv"))
+print("File saved successfully!")
+
 ```
