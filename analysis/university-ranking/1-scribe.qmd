@@ -21,6 +21,12 @@ editor_options:
 This report narrates the preparation of data on rankings of Ukrainian universities in 2024 as reported by EuroOsvita and National Registry of University.
 
 ```{r}
+#| label: load-packages
+#| code-summary: Load Packages to be used in Report
+#| code-fold: true
+#| warning: false
+
+
 library(tidyverse)
 library(rvest)
 library(ggplot2)
@@ -31,7 +37,7 @@ library(magrittr)
 
 # EuroOsvita
 
-We extract the [data table](https://euroosvita.net/index.php/?category=49&id=8251) with university rankings for 2024 as reported by \[Euro Osvita\]\[https://euroosvita.net\].
+We extract the [data table](https://euroosvita.net/index.php/?category=49&id=8251) with university rankings for 2024 as reported by [Euro Osvita](https://euroosvita.net).
 
 ```{r}
 #| label: load-data-1
@@ -58,6 +64,7 @@ A [separate page](https://euroosvita.net/index.php/?category=1&id=8252) from the
 #| code-summary: Importing data from supporting google sheets
 #| results: hide
 #| cache: true
+#| warning: false
 # we manually copy-paste Table 3 into a google spreadsheet, manually tweak,
 # augment with additional variables, and inport into R.  Consider this workflow,
 # as an alternative for using propriary software such as MS Excel
@@ -80,6 +87,8 @@ ds_edu_index %>% glimpse()
 We also use other sources (such as National Registry of Universities) to assemble additional data. First we tabulate these data manually in Google sheets and then import for analysis here.
 
 ```{r}
+#| warning: false
+
 googlesheets4::gs4_deauth() 
 
 ds_school_meta <- 
@@ -106,6 +115,8 @@ ds_school_meta2 %>% glimpse()
 To better understand how universities fit our personal preferences we assemble a table with custom weights which we will use to compare university ranking against those determined by the experts in the EuroOsvita report
 
 ```{r}
+#| warning: false
+
 googlesheets4::gs4_deauth() 
 
 ds_myrank <- 
@@ -121,15 +132,19 @@ ds_myrank %>% glimpse()
 
 # Tweak Data
 
-## Tweak 1
+## Tweak 1 
 
-Here we rename indices for the use with English speakers and organize measured dimensions.
+Here we rename indices for the use with English speakers and organize measured dimensions. We consolidate custom meta data into a single tibble. 
+
+
 
 ```{r}
+#| warning: false
 #| label: tweak-data-1
 #| code-summary: Wrangle data
 #| results: hide
 #| cache: true
+#| code-fold: true
 
 ds1_school_contex <- 
   ds_school_meta %>% 
@@ -192,6 +207,18 @@ ds_names  %>% print(n=nrow(.))
 # ds1 %>% glimpse()
 ```
 
+
+```{r}
+#| label: inspect-data-1
+#| code-fold: show
+#| code-summary: Inspect Objects of Form `ds1`
+
+ds1_school_contex %>% glimpse()
+
+ds1  %>%  glimpse()
+
+```
+
 ## Tweak 2
 
 Now we can make a few observations that should instruct further transformation.
@@ -206,7 +233,7 @@ Now we can make a few observations that should instruct further transformation.
 #| label: tweek-data-2
 #| code-summary: Preparing data to use 
 #| warning: false
-#| results: hold
+#| results: hide
 #| code-fold: true
 #| cache: true
 
@@ -241,11 +268,25 @@ ds2 %>% glimpse()
 # ds1_school_contex %>% glimpse()
 ```
 
-## Tweak 2
+```{r}
+#| label: inspect-data-2
+#| code-fold: show
+#| code-summary: Inspect Objects of Form `ds2`
+
+ds2 %>% glimpse()
+
+
+```
+
+## Tweak 3
 
 Here we augment the main table (university rankings from EuroOsvita) with data from other sources to create a rich data set to be passed for further exploration and analysis.
 
 ```{r}
+#| code-summary: Adds custom meta data to the dataset of the university-ranking
+#| results: hide
+#| code-fold: true
+ 
 ds3 <- 
   ds2 %>%
   left_join(
@@ -259,13 +300,27 @@ ds3 <-
 ds3 %>% glimpse()
 ```
 
+```{r}
+#| label: inspect-data-3
+#| code-fold: show
+#| code-summary: Inspect Objects of Form `ds3`
+
+ds3  %>% glimpse()
+```
+
+
 # Save to Disk
 
-Store data on disk to create a single point of departure for all subsequent analytic reports.
+Store data on disk to create a single point of departure for all subsequent analytic reports. 
+
+
+> `ds3` is the data table passed down to exploratory reports and structured narratives 
 
 ```{r}
 #| label: save-to-disk
 #| code-summary: Save prepared data to disk
+#| warning: false
+
 
 dir_path <- "../../data-private/derived/university-ranking/"
 
