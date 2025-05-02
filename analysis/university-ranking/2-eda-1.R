@@ -29,19 +29,17 @@ base::source("./scripts/common-functions.R") # project-level
 
 # ---- declare-globals ---------------------------------------------------------
 # printed figures will go here:
-# prints_folder <- paste0("./analysis/.../prints/")
-# if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))}
+prints_folder <- paste0("./analysis/university-ranking/2-eda-1/prints/")
+if (!fs::dir_exists(prints_folder)) {fs::dir_create(prints_folder)}
 
 path_data_input <- "./data-private/derived/university-ranking/1-scribe-ds3.rds"
 # ---- declare-functions -------------------------------------------------------
-# printed figures will go here:
-prints_folder <- paste0("./analysis/.../prints/")
-if (!fs::dir_exists(prints_folder)) {fs::dir_create(prints_folder)}
+
 # ---- load-data ---------------------------------------------------------------
 ds0 <- readr::read_rds(path_data_input)
 
 # ---- inspect-data ------------------------------------------------------------
-
+ds0 %>% glimpse()
 
 # ---- tweak-data --------------------------------------------------------------
 
