@@ -10,8 +10,14 @@ A series of data explorations into rankings of Ukrainian universities in 2024. W
 
 - [University ranking scribe](https://raw.githack.com/olesandr-k/applied-math-stories/main/analysis/university-ranking/1-scribe.html) - account of how we imported and cleaned data. We also added a [meta data file](https://docs.google.com/spreadsheets/d/1MbTBWkIPMeIIjmLH4Q__TVWUg9y9KqTY34MwWYP0HoM/edit?gid=0#gid=0) as a google sheet to avoid verbose code.
 
+### Structed Narratives 
+
 - [University ranking](https://raw.githack.com/olesandr-k/applied-math-stories/refs/heads/main/analysis/university-ranking/university-ranking.html) - the main story.
 
 - [University ranking-3](https://raw.githack.com/olesandr-k/applied-math-stories/refs/heads/main/analysis/university-ranking/university-ranking-3.html) - Story 3. Geography
 
+### Unstructed Explorations 
 
+- [2-eda-1](https://raw.githack.com/olesandr-k/applied-math-stories/main/analysis/university-ranking/2-eda-1.html)
+
+- [2-eda-2](https://raw.githack.com/olesandr-k/applied-math-stories/main/analysis/university-ranking/2-eda-2.html)
