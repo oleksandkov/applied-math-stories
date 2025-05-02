@@ -1,0 +1,543 @@
+---
+title: "2-eda-2"
+subtitle: "Univariate distributions of key metrics"
+authors: 
+  - "Oleksandr Koval"
+  - "Andriy Koval"
+format:
+  html:
+    page-layout: full
+    toc: true
+    toc-location: right
+    code-fold: show
+    theme: simplex
+    highlight-style: github
+    colde-line-numbers: true
+    css: styles.css
+    self-contained: true
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+The report explores univariate distributions of key variables
+
+```{r}
+#| results: hide
+#| code-summary: "Load packages used in report"
+#| label: "load-packages"
+#| warning: false
+#| message: false
+
+
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+
+```
+
+```{r}
+#| label: "load-data"
+#| code-summary: "Input data"
+
+ds3 <- readRDS("../../data-private/derived/university-ranking/1-scribe-ds3.rds")
+#file_path <- "/data-private/derived/university-ranking/"
+glimpse(ds3)
+
+```
+
+# Defenitions
+
+Index of the university is a numerical value produce by adding rank positions that were weighted by experts, lower number correspond to better university. The value of index ranges from `r ds3$index_2024 %>% min()` to `r ds3$index_2024 %>% max()`.
+
+```{r}
+ds3$index_2024 %>% summary()
+```
+
+The rank of university represents the positions in this list.
+
+# Indexes
+
+## Key indices to observe 
+
+1)  Type of Skewness (left, right, symmetric)
+2)  Modality( unimodal, bimodal, uniform)
+3)  Mean
+4)  Median
+5)  Standard deviation
+6)  Mode (where possible)
+7)  Interquartile Range (IQR)
+
+```{r}
+#| results: hide
+#| code-fold: true
+#| code-summary: Function for mode 
+#| warning: false
+
+
+mode_values <- function(x) {
+  tbl <- table(x)
+  max_freq <- max(tbl)
+  return(as.numeric(names(tbl)[tbl == max_freq]))  # Return all modes
+}
+```
+
+## Index variable
+
+```{r}
+#| label: index
+#| code-summary: "Statistical properties of index_2024 variable"
+#| code-fold: true
+#| results: markup
+#| warning: false
+
+# ds3 %>% 
+#   ggplot(aes(x = index_2024)) + 
+#   geom_histogram()
+  
+ds3 %>% TabularManifest::histogram_continuous("index_2024")
+
+# ds3 %>% select(index_2024) %>% 
+#   tableone::CreateTableOne(data = .) 
+
+ds3 %>% 
+  summarise(
+    index_mean = mean(index_2024)
+    , index_sd = sd(index_2024)
+    , index_median = median(index_2024)
+    , index_iqr = IQR(index_2024)
+    , index_mode = mode_values(index_2024)
+  )
+
+
+```
+
+Modality: **Bimodal**
+
+Skewness: **Left**
+
+Mean: **`r ds3$index_2024 %>% mean()`**
+
+Standart Deviation: **`r ds3$index_2024 %>% sd()`**
+
+Median: **`r ds3$index_2024 %>% median()`**
+
+IQR: **`r ds3$index_2024 %>% IQR()`**
+
+Mode: **`r ds3$index_2024 %>% mode_values()`**
+
+## Scopus index
+
+```{r}
+#| label: scopus
+#| code-summary: "Statistical properties of scopus_index variable"
+#| code-fold: true
+#| results: markup
+#| warning: false
+ds3 %>% TabularManifest::histogram_continuous("scopus_index")
+
+ds3 %>% summarise(
+  scopus_mean = mean(scopus_index)
+  , scopus_sd = sd(scopus_index)
+  , scopus_median = median(scopus_index)
+  , scopus_iqr = IQR(scopus_index)
+  , scopus_mode = mode_values(scopus_index)
+) %>% print.table()
+```
+
+Modality: **Uniform**
+
+Skewness: **Symmetric**
+
+Mean: **`r ds3$scopus_index %>% mean()`**
+
+Standart Deviation: **`r ds3$scopus_index %>% sd()`**
+
+Median: **`r ds3$scopus_index %>% median()`**
+
+IQR: **`r ds3$scopus_index %>% IQR()`**
+
+Mode: **`r ds3$scopus_index %>% mode_values()`**
+
+## Webometrics index
+
+```{r}
+#| label: webometrics
+#| code-summary: "Statistical properties of webometrics_index variable"
+#| code-fold: true
+#| width: 11
+#| results: markup
+#| warning: false
+
+ds3 %>% TabularManifest::histogram_continuous("webometrics_index")
+
+ds3 %>% summarise(
+  webometrics_mean = mean(webometrics_index)
+  ,webometrics_sd = sd(webometrics_index)
+  , webometrics_median = median(webometrics_index)
+  , webometrics_iqr = IQR(webometrics_index)
+  , webometrics_mode = mode_values(webometrics_index)
+) %>% print.table()
+```
+
+Modality: **Uniform**
+
+Skewness: **Right**
+
+Mean: **`r ds3$webometrics_index %>% mean()`**
+
+Standart Deviation: **`r ds3$webometrics_index %>% sd()`**
+
+Median: **`r ds3$webometrics_index %>% median()`**
+
+IQR: **`r ds3$webometrics_index %>% IQR()`**
+
+Mode: **`r ds3$webometrics_index %>% mode_values()`**
+
+## Competition index
+
+```{r}
+#| label: competition_index
+#| code-summary: "Statistical properties of competition_index variable"
+#| code-fold: true
+#| width: 11
+#| results: markup
+#| warning: false
+
+ds3 %>% TabularManifest::histogram_continuous("competition_index")
+
+ds3 %>% summarise(
+  competition_mean = mean(competition_index)
+  , competition_sd = sd(competition_index)
+  , competition_median = median(competition_index)
+  , competition_iqr = IQR(competition_index)
+  , competition_mode = mode_values(competition_index)
+) %>% print.table()
+```
+
+Modality: **Five peaks**
+
+Skewness: **Left**
+
+Mean: **`r ds3$competition_index %>% mean()`**
+
+Standart Deviation: **`r ds3$competition_index %>% sd()`**
+
+Median: **`r ds3$competition_index %>% median()`**
+
+IQR: **`r ds3$competition_index %>% IQR()`**
+
+Mode: **`r ds3$competition_index %>% mode_values()`**
+
+## Naqa index
+
+```{r}
+#| label: naqa_index
+#| code-summary: "Statistical properties of naqa_index variable"
+#| code-fold: true
+#| width: 11
+#| results: markup
+#| warning: false
+
+ds3 %>% TabularManifest::histogram_continuous("naqa_index")
+
+ds3 %>% summarise(
+  naqa_mean = mean(naqa_index)
+  , naqa_sd = sd(naqa_index)
+  , naqa_median = median(naqa_index)
+  , naqa_iqr = IQR(naqa_index)
+  , naqa_mode = mode_values(naqa_index)
+) %>% print.table()
+
+```
+
+Modality: **Bimodal**
+
+Skewness: **Right**
+
+Mean: **`r ds3$naqa_index %>% mean()`**
+
+Standart Deviation: **`r ds3$naqa_index %>% sd()`**
+
+Median: **`r ds3$naqa_index %>% median()`**
+
+IQR: **`r ds3$naqa_index %>% IQR()`**
+
+Mode: **`r ds3$naqa_index %>% mode_values()`**
+
+## Patent index
+
+```{r}
+#| label: patent_index
+#| code-summary: "Statistical properties of patent_index variable"
+#| code-fold: true
+#| width: 11
+#| results: markup
+#| warning: false
+
+ds3 %>% TabularManifest::histogram_continuous("patent_index")
+
+ds3 %>% summarise(
+  patent_mean = mean(patent_index)
+  , patent_sd = sd(patent_index)
+  , patent_median = median(patent_index)
+  , patent_iqr = IQR(patent_index)
+  , patent_mode = mode_values(patent_index)
+) %>% print.table()
+
+```
+
+Modality: **Unimodal**
+
+Skewness: **Left**
+
+Mean: **`r ds3$patent_index %>% mean()`**
+
+Standart Deviation: **`r ds3$patent_index %>% sd()`**
+
+Median: **`r ds3$patent_index %>% median()`**
+
+IQR: **`r ds3$patent_index %>% IQR()`**
+
+Mode: **`r ds3$patent_index %>% mode_values()`**
+
+## Mean index
+
+```{r}
+#| label: mean_index
+#| code-summary: "Statistical properties of mean_index variable"
+#| code-fold: true
+#| width: 11
+#| results: markup
+#| warning: false
+
+ds3 %>% TabularManifest::histogram_continuous("mean_index")
+
+ds3 %>% summarise(
+  mean_mean = mean(mean_index)
+  , mean_sd = sd(mean_index)
+  , mean_median = median(mean_index)
+  , mean_iqr = IQR(mean_index)
+  #, mean_mode = mode_values(mean_index)
+) %>% print.table()
+
+ds3 %>% summarise(
+  mean_mode = mode_values(mean_index)
+)  
+```
+
+Modality: **Unimodal**
+
+Skewness: **Symmetric**
+
+Mean: **`r ds3$mean_index %>% mean()`**
+
+Standart Deviation: **`r ds3$mean_index %>% sd()`**
+
+Median: **`r ds3$mean_index %>% median()`**
+
+IQR: **`r ds3$mean_index %>% IQR()`**
+
+Mode: **`r ds3$mean_index %>% mode_values()`**
+
+# Another variables
+
+## Department count
+
+```{r}
+#| label: department_count
+#| code-summary: "Statistical properties of department_count variable"
+#| code-fold: true
+#| width: 11
+#| results: markup
+#| warning: false
+
+ds3 %>% 
+  filter(
+    department_count == na.omit(department_count)
+  ) %>% 
+  select(department_count) %>% 
+TabularManifest::histogram_continuous("department_count")
+
+ds3 %>% 
+  filter(
+    rank_2024 <= 50
+    # , department_count == na.omit(department_count)
+  ) %>% 
+  select(department_count) %>% 
+  summarise(
+    department_mean = mean(department_count)
+    ,department_sd = sd(department_count)
+    , department_median = median(department_count)
+    , department_iqr = IQR(department_count)
+    , department_mode = mode_values(department_count)
+  )
+ds1 <- 
+  ds3 %>% 
+   filter(
+    rank_2024 <= 50
+    # , department_count == na.omit(department_count)
+  )
+```
+
+Modality: **Unimodal**
+
+Skewness: **Right**
+
+Mean: **`r ds1$department_count %>% mean()`**
+
+Standart Deviation: **`r ds1$department_count %>%  sd()`**
+
+Median: **`r ds1$department_count %>% median()`**
+
+IQR: **`r ds1$department_count %>% IQR()`**
+
+Mode: **`r ds1$department_count %>%  mode_values()`**
+
+## Program count
+
+```{r}
+#| label: program_count
+#| code-summary: "Statistical properties of program_count variable"
+#| code-fold: true
+#| width: 11
+#| results: markup
+#| warning: false
+
+ds3 %>% 
+  filter(
+    program_count == na.omit(program_count)
+  ) %>% 
+  select(program_count) %>% 
+TabularManifest::histogram_continuous("program_count")
+
+ds3 %>% 
+  filter(
+    rank_2024 <= 50
+    # , department_count == na.omit(department_count)
+  ) %>% 
+  select(program_count) %>% 
+  summarise(
+    program_mean = mean(program_count)
+    ,program_sd = sd(program_count)
+    , program_median = median(program_count)
+    , program_iqr = IQR(program_count)
+    , program_mode = mode_values(program_count)
+  )
+```
+
+Modality: **Unimodal**
+
+Skewness: **Right**
+
+Mean: **`r ds1$program_count %>% mean()`**
+
+Standart Deviation: **`r ds1$program_count %>%  sd()`**
+
+Median: **`r ds1$program_count %>% median()`**
+
+IQR: **`r ds1$program_count %>% IQR()`**
+
+Mode: **`r ds1$program_count %>%  mode_values()`** \## City population
+
+```{r}
+#| label: city_population
+#| code-summary: "Statistical properties of population of the city variable"
+#| code-fold: true
+#| width: 11
+#| results: markup
+#| warning: false
+
+
+ds3 %>% TabularManifest::histogram_continuous("city_population")
+
+ds1 <- 
+ds3 %>% 
+  summarise(
+    city_mean = format(mean(city_population),  big.mark = ",")
+    , city_sd = format(sd(city_population),  big.mark = ",")
+    , city_median = format(median(city_population),  big.mark = ",")
+    , city_iqr = format(IQR(city_population),  big.mark = ",")
+    , city_mode = format(mode_values(city_population),  big.mark = ",") 
+  ) %>% print.table()
+```
+
+Modality: **Unimodal**
+
+Skewness: **Right**
+
+Mean: **`r ds1$city_mean`**
+
+Standart Deviation: **`r ds1$city_sd`**
+
+Median: **`r ds1$city_median`**
+
+IQR: **`r ds1$city_iqr`**
+
+Mode: **`r ds1$city_mode`**
+
+## Applicaion total count
+
+```{r}
+#| label: application_total_count
+#| code-summary: "Statistical properties of total number of applications variable"
+#| code-fold: true
+#| width: 11
+#| results: markup
+#| warning: false
+
+ds3 %>% TabularManifest::histogram_continuous("application_total_count")
+
+ds3$application_budget_count %>% mode_values()
+
+ds1 <- 
+ds3 %>% 
+  filter(!is.na(application_total_count)) %>% 
+  reframe(
+    application_total_count_mean = mean(application_total_count)
+    , application_total_count_sd = sd(application_total_count)
+    , application_total_count_median = median(application_total_count)
+    , application_total_count_iqr = IQR(application_total_count)
+    , #application_total_count_mode = mode_values(application_total_count)
+  ) %>% slice(1) %>% print.table()
+```
+
+Modality: **Unimodal**
+
+Skewness: **Right**
+
+Mean: **`r ds1$application_total_count_mean`**
+
+Standart Deviation: **`r ds1$application_total_count_sd`**
+
+Median: **`r ds1$application_total_count_median`**
+
+IQR: **`r ds1$application_total_count_iqr`**
+
+## Score mean
+
+```{r}
+#| label: score_mean
+#| code-summary: "Statistical properties of score_mean variable"
+#| code-fold: true
+#| width: 11
+#| results: markup
+#| warning: false
+
+ds3 %>% TabularManifest::histogram_continuous("score_mean")
+
+ds1 <- ds3$score_mean %>% 
+  na.omit()
+
+ds3 %>% 
+  summarise(
+    score_mean_mean = mean(score_mean, na.rm = TRUE),
+    score_sd = sd(score_mean, na.rm = TRUE),
+    score_median = median(score_mean, na.rm = TRUE),
+    score_iqr = IQR(score_mean, na.rm = TRUE),
+    score_mode = mode_values(score_mean)
+  )
+
+```
