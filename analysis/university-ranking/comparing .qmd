@@ -1,0 +1,119 @@
+---
+title: "Comparing universites"
+author: "Oleksandr Koval"
+format:
+  html:
+    page-layout: full
+    toc: true
+    toc-location: right
+    code-fold: show
+    theme: simplex
+    highlight-style: github
+    colde-line-numbers: true
+    css: styles.css
+    self-contained: true
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+# Introduction
+
+In this report I want to find out which university will be better to choose after graduating from school.
+
+All of us thought about studying in another city and graduating from school is a great opportunity to move. In this report I compare a few "Top" universities in Ukraine with the local universities in two cities, Vinnytsia and Dnipro.
+
+As a top universities I chose: **KPI in Kyiv** (Національний технічний університет України "Київський політехнічний інститут імені Ігоря Сікорського"), **KNUTS in Kyiv** (Київський національний університет імені Тараса Шевченка) and **LKPI in Lviv** (Національний університет "Львівська політехніка"). I called students who are going to graduate ***Bill*** from Dnipro and ***Sasha*** from Vinnytsia.
+
+
+As a local university in Vinnytsia I chose **VNTU** and the local one in Dnipro I chose **NTUDP**.
+
+To objectivity my report I'll compare universities according to these points:
+
+1)  Experience and Location
+
+2)  International attitude
+
+3)  National attitude
+
+4)  Chances to get apply
+
+5)  University's activity
+
+# Introduction to data 
+
+As a data I use a table where there are necessary information to do this report, like *student_count*, *city*, *rank_2024*.... 
+
+
+```{r}
+#| code-summary: "Load packages"
+#| results: hide
+#| message: false
+#| warning: false
+#| code-fold: true
+
+
+
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+
+ds3 <- readRDS("C:/Users/muaro/Documents/GitHub/applied-math-stories/data-private/derived/university-ranking/1-scribe-ds3.rds")
+
+
+print(ds3)
+getwd()
+summary(ds3)
+```
+
+## 1-Experience and Location 
+
+Honestly, this is not a very objectively point to compare but it can be very important for someone to know in which city you are going to live next 5 years. 
+
+
+If you choose a "top tier" universities you will see a lot new sights, interesting places, able to feel new experience, meet more new friends. This point hard to explain for all because everyone have different tastes but, as for me, it necessary and important step in your future life. 
+
+
+# 2-International Atittude 
+
+
+In this paragraph I will tell you some statistical information to show how international ranks evaluate Ukraniane universities.
+
+
+### "Top Universities" vs VNTU 
+
+
+```{r}
+#| lable: graph1
+#| code-summary: Making graph
+#| code-fold: true
+#| fig.width: 11
+#| fig.height: 7
+#| results: hold
+#| warning: false
+
+
+d1 <- 
+ds3 %>% filter(
+  school_abb %in% c("KPI", "KNUTS", "LKPI", "VNTU")
+) %>% 
+  select(school_id, school_name, school_abb,scopus_rank, qs_rank, webometrics_rank, wur_rank, qswur_rank) 
+
+
+  
+d1 %>%   
+ggplot(aes(x = school_abb, y = scopus_rank)) + 
+  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "green",  size = 5, shape = 21, alpha = 0.7) +
+  geom_point(data = filter(d1, school_abb != "VNTU"), size = 5, fill = "grey", color = "black", shape = 21) +
+   scale_y_reverse(breaks = sort(unique(d1$scopus_rank))) +
+   geom_text(aes(label = school_abb),  nudge_y = -2.5, color = "darkblue") +
+  theme_minimal() +
+  labs(
+    x = "Schools's abbreviations"
+    , y = "According to Scopus Rank"
+    , title = "Scopus rank"
+  )
+```
+
