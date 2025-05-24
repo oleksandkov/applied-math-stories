@@ -114,7 +114,9 @@ analysis/*/*/*.html
 analysis/*/*/*/*.png
 analysis/*/*/*/*.jpg
 analysis/*/*/*/*.html
+analysis/*/*/*/*.js
 analysis/*/*/*/*/*.js
+analysis/*/*/*/*/*/*.js
 
 !analysis/analysis-templatization/README.html
 !analysis/solar-day/solar-day-vinnytsia.html
