@@ -1,0 +1,259 @@
+---
+title: "Comparing Ukrainian Universities"
+author: "Oleksandr Koval"
+format: 
+  revealjs:
+    theme: simple
+---
+
+## Introduction
+
+- Як обрати університет після школи?
+- Порівняння топових університетів України (КПІ, КНУТШ, ЛКПІ) з місцевими (ВНТУ у Вінниці, НТУДП у Дніпрі)
+- Розглядаємо досвід, інтернаціональні рейтинги, шанси на вступ і активність університетів
+
+---
+
+## Data Overview
+
+- Дані: таблиця з інформацією про університети (кількість студентів, місто, рейтинги, заявки)
+- Джерело: 1-scribe-ds3.rds
+
+``` {r}
+library(tidyverse)
+ds3 <- readRDS("../../data-private/derived/university-ranking/1-scribe-ds3.rds")
+summary(ds3)
+```
+
+---
+
+## 1. Experience & Location
+
+- Вибір міста — це новий досвід, знайомства та можливості
+- "Топові" університети відкривають більше горизонтів
+- Місцеві виші — зручність і рідне місто
+
+---
+
+## 2. International Attitude
+
+- Порівняння університетів за міжнародними рейтингами:
+    - Scopus Rank
+    - Webometrics Rank
+    - QS Rank
+    - Times Higher Education (THE)
+    - QS Sustainability
+
+---
+
+## "Top Universities" vs VNTU: Scopus Rank
+
+``` {r}
+d1 <- ds3 %>% filter(school_abb %in% c("KPI", "KNUTS", "LKPI", "VNTU"))
+ggplot(d1, aes(x = school_abb, y = scopus_rank)) +
+  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "green", size = 5, shape = 21, alpha = 0.7) +
+  geom_point(data = filter(d1, school_abb != "VNTU"), size = 5, fill = "grey", color = "black", shape = 21) +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), nudge_y = -2.5, color = "darkblue") +
+  theme_minimal() +
+  labs(x = "Університет", y = "Scopus Rank", title = "Scopus Ranking (VNTU vs Топ)")
+```
+
+---
+
+## "Top Universities" vs VNTU: Webometrics Rank
+
+``` {r}
+ggplot(d1, aes(x = school_abb, y = webometrics_rank)) +
+  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "green", size = 5, shape = 21, alpha = 0.7) +
+  geom_point(data = filter(d1, school_abb != "VNTU"), size = 5, fill = "grey", color = "black", shape = 21) +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), nudge_y = -2.5, color = "darkblue") +
+  theme_minimal() +
+  labs(x = "Університет", y = "Webometrics Rank", title = "Webometrics Ranking")
+```
+
+---
+
+## "Top Universities" vs VNTU: QS Rank
+
+``` {r}
+ggplot(d1, aes(x = school_abb, y = qs_rank)) +
+  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "green", size = 5, shape = 21, alpha = 0.7) +
+  geom_point(data = filter(d1, school_abb != "VNTU"), size = 5, fill = "grey", color = "black", shape = 21) +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), nudge_y = -0.5, color = "darkblue") +
+  theme_minimal() +
+  labs(x = "Університет", y = "QS Rank", title = "QS Ranking")
+```
+
+---
+
+## "Top Universities" vs VNTU: THE World University Ranking
+
+``` {r}
+ggplot(d1, aes(x = school_abb, y = wur_rank)) +
+  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "green", size = 5, shape = 21, alpha = 0.7) +
+  geom_point(data = filter(d1, school_abb != "VNTU"), size = 5, fill = "grey", color = "black", shape = 21) +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), nudge_y = -0.5, color = "darkblue") +
+  theme_minimal() +
+  labs(x = "Університет", y = "THE Rank", title = "Times Higher Education Ranking")
+```
+
+---
+
+## "Top Universities" vs VNTU: QS Sustainability Ranking
+
+``` {r}
+ggplot(d1, aes(x = school_abb, y = qswur_rank)) +
+  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "green", size = 5, shape = 21, alpha = 0.7) +
+  geom_point(data = filter(d1, school_abb != "VNTU"), size = 5, fill = "grey", color = "black", shape = 21) +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), nudge_y = -0.5, color = "darkblue") +
+  theme_minimal() +
+  labs(x = "Університет", y = "QS Sustainability", title = "QS Sustainability Ranking")
+```
+
+---
+
+## "Top Universities" vs NTUDP: Scopus Rank
+
+``` {r}
+d2 <- ds3 %>% filter(school_abb %in% c("KPI", "KNUTS", "LKPI", "NTUDP"))
+ggplot(d2, aes(x = school_abb, y = scopus_rank)) +
+  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "red", size = 5, shape = 21, alpha = 0.7) +
+  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 5, fill = "grey", color = "black", shape = 21) +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), nudge_y = -2.5, color = "darkblue") +
+  theme_minimal() +
+  labs(x = "Університет", y = "Scopus Rank", title = "Scopus Ranking (NTUDP vs Топ)")
+```
+
+---
+
+## "Top Universities" vs NTUDP: Webometrics Rank
+
+``` {r}
+ggplot(d2, aes(x = school_abb, y = webometrics_rank)) +
+  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "red", size = 5, shape = 21, alpha = 0.7) +
+  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 5, fill = "grey", color = "black", shape = 21) +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), nudge_y = -2.5, color = "darkblue") +
+  theme_minimal() +
+  labs(x = "Університет", y = "Webometrics Rank", title = "Webometrics Ranking")
+```
+
+---
+
+## "Top Universities" vs NTUDP: QS Rank
+
+``` {r}
+ggplot(d2, aes(x = school_abb, y = qs_rank)) +
+  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "red", size = 5, shape = 21, alpha = 0.7) +
+  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 5, fill = "grey", color = "black", shape = 21) +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), nudge_y = -0.5, color = "darkblue") +
+  theme_minimal() +
+  labs(x = "Університет", y = "QS Rank", title = "QS Ranking")
+```
+
+---
+
+## "Top Universities" vs NTUDP: THE World University Ranking
+
+``` {r}
+ggplot(d2, aes(x = school_abb, y = wur_rank)) +
+  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "red", size = 5, shape = 21, alpha = 0.7) +
+  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 5, fill = "grey", color = "black", shape = 21) +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), nudge_y = -0.5, color = "darkblue") +
+  theme_minimal() +
+  labs(x = "Університет", y = "THE Rank", title = "Times Higher Education Ranking")
+```
+
+---
+
+## "Top Universities" vs NTUDP: QS Sustainability Ranking
+
+``` {r}
+ggplot(d2, aes(x = school_abb, y = qswur_rank)) +
+  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "red", size = 5, shape = 21, alpha = 0.7) +
+  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 5, fill = "grey", color = "black", shape = 21) +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), nudge_y = -0.5, color = "darkblue") +
+  theme_minimal() +
+  labs(x = "Університет", y = "QS Sustainability", title = "QS Sustainability Ranking")
+```
+
+---
+
+## Висновки щодо рейтингів
+
+- Локальні університети зазвичай мають нижчі міжнародні позиції
+- Топ-університети — вибір для тих, хто прагне престижу та міжнародних можливостей
+
+---
+
+## 3. Chances to Get In
+
+- Доступність вступу: кількість заяв, заяв на бюджет, середній бал вступника
+
+---
+
+### Кількість поданих заяв (всього)
+
+``` {r}
+d3 <- ds3 %>% filter(school_abb %in% c("KPI", "KNUTS", "LKPI", "NTUDP", "VNTU"))
+ggplot(d3, aes(x = school_abb, y = application_total_count)) +
+  geom_col(fill = "steelblue", alpha = 0.7) +
+  geom_text(aes(label = application_total_count), vjust = -0.5) +
+  theme_minimal() +
+  labs(x = "Університет", y = "Всього заяв", title = "Кількість поданих заяв")
+```
+
+---
+
+### Кількість заяв на бюджет
+
+``` {r}
+ggplot(d3, aes(x = school_abb, y = application_budget_count)) +
+  geom_col(fill = "seagreen3", alpha = 0.7) +
+  geom_text(aes(label = application_budget_count), vjust = -0.5) +
+  theme_minimal() +
+  labs(x = "Університет", y = "Заяв на бюджет", title = "Кількість заяв на бюджет")
+```
+
+---
+
+### Середній бал вступників
+
+``` {r}
+ggplot(d3, aes(x = school_abb, y = score_mean)) +
+  geom_col(fill = "orange", alpha = 0.7) +
+  geom_text(aes(label = round(score_mean, 2)), vjust = -0.5) +
+  theme_minimal() +
+  labs(x = "Університет", y = "Середній бал", title = "Середній бал вступників")
+```
+
+---
+
+## 4. University's Activity
+
+- Важливість наукової, соціальної та бізнес-активності
+- Додаткові можливості для студентів
+
+---
+
+## Summary & Recommendations
+
+- Обирайте університет свідомо: орієнтуйтесь на власні цілі та дані
+- Топові університети — більше можливостей і престиж
+- Місцеві — легший вступ, комфортне середовище
+
+---
+
+## Questions?
+
+Дякую за увагу!
+
