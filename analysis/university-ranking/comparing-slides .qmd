@@ -3,25 +3,90 @@ title: "Comparing Ukrainian Universities"
 author: "Oleksandr Koval"
 format: 
   revealjs:
-    theme: simple
+    theme: night
+    transition: slide
 ---
 
 ## Introduction
 
-- Як обрати університет після школи?
-- Порівняння топових університетів України (КПІ, КНУТШ, ЛКПІ) з місцевими (ВНТУ у Вінниці, НТУДП у Дніпрі)
-- Розглядаємо досвід, інтернаціональні рейтинги, шанси на вступ і активність університетів
+---
+
+<div style="text-align: left; font-size:1.3em;">
+<strong>Two Friends, Two Stories</strong><br><br>
+Sasha lives in Vinnytsia, Bill — in Dnipro. Both have just finished school and face a classic dilemma:<br>
+<span class="fragment highlight-current-blue" style="color:#FFC300;font-weight:bold">
+Where to go next, to not only get a degree, but to truly open doors for the future?
+</span>
+</div>
+
+---
+
+<div style="text-align: left; font-size:1.15em;">
+<strong>Dreams and Doubts</strong><br>
+Sasha dreams of big cities — he is drawn to Kyiv or Lviv, vast campuses, prestigious universities, new startups and interesting people.<br>
+But he wonders: if he stays in Vinnytsia, close to family and friends, is that really a step back?<br>
+<span class="fragment fade-in" style="color:#FFC300;font-weight:bold">
+VNTU is a strong local technical university — maybe it’s not a compromise after all.
+</span>
+</div>
+
+---
+
+<div style="text-align: left; font-size:1.15em;">
+<strong>Bill’s Perspective</strong><br>
+Bill wants to be an IT specialist or engineer. He loves his home city, but hears so many cool things about “top universities”.<br>
+<span class="fragment fade-in" style="color:#FFC300;font-weight:bold">
+Would a KPI or Lviv Polytech diploma really open more doors?
+</span><br>
+Or will staying at NTUDP in Dnipro — with local connections and lower costs — be the smarter move?
+</div>
+
+---
+
+<div style="text-align: left; font-size:1.15em;">
+<strong>The Eternal Dilemma</strong><br>
+They keep returning to the same questions:
+<ul style="color:#FFC300; font-weight:bold; margin-left: 1.2em;">
+  <li class="fragment">Is a “top” university really worth it?</li>
+  <li class="fragment">Does comfort and familiar surroundings matter more at the start of adult life?</li>
+  <li class="fragment">Where is it easier to find friends, inspiration, and a first job?</li>
+  <li class="fragment">How to see beyond “prestige” and find real opportunities?</li>
+</ul>
+</div>
+
+---
+
+<div style="text-align: left; font-size:1.15em;">
+<strong>This Presentation = Their Decision Map</strong><br>
+Sasha and Bill decide to be rational:<br>
+<span class="fragment fade-in" style="color:#FFC300;font-weight:bold">
+They compare universities by rankings, accessibility, student life, and future perspectives.
+</span><br>
+This presentation is not just numbers — it’s a <span class="fragment highlight-current-blue" style="color:#FFC300;font-weight:bold">real decision map</span> for every graduate at this crossroads.
+</div>
 
 ---
 
 ## Data Overview
 
-- Дані: таблиця з інформацією про університети (кількість студентів, місто, рейтинги, заявки)
-- Джерело: 1-scribe-ds3.rds
+- Data: a table of universities (student numbers, city, rankings, applications)
+- Source: 1-scribe-ds3.rds
 
 ``` {r}
 library(tidyverse)
-ds3 <- readRDS("../../data-private/derived/university-ranking/1-scribe-ds3.rds")
+ds3 <- readRDS("C:/Users/muaro/Documents/GitHub/applied-math-stories/data-private/derived/university-ranking/1-scribe-ds3.rds")
+theme_set(
+  theme_minimal(base_size = 18) +
+    theme(
+      panel.background = element_rect(fill = "#171a21", color = NA),
+      plot.background  = element_rect(fill = "#171a21", color = NA),
+      plot.title       = element_text(face = "bold", hjust = 0.5, size = 22, color = "#FFF"),
+      axis.title       = element_text(size = 16, color = "#AEEFFF"),
+      axis.text        = element_text(size = 14, color = "#E1E8ED"),
+      panel.grid.major = element_line(color = "#223", size = 0.5),
+      panel.grid.minor = element_blank()
+    )
+)
 summary(ds3)
 ```
 
@@ -29,15 +94,58 @@ summary(ds3)
 
 ## 1. Experience & Location
 
-- Вибір міста — це новий досвід, знайомства та можливості
-- "Топові" університети відкривають більше горизонтів
-- Місцеві виші — зручність і рідне місто
+---
+
+### Why does location matter?
+
+- Your university city is not just about education — it's your lifestyle for 4–6 years.
+- The city will shape your friends, routine, impressions, and even career options.
+- Look not just at rankings, but also at comfort, adaptation, and city opportunities.
+
+---
+
+### Advantages of Top Universities (Kyiv, Lviv, Big Cities)
+
+- More specialties, modern labs, stronger academic programs.
+- Lots of clubs, events, international exchanges.
+- Active city life: concerts, startups, communities, networking.
+- Prestigious diplomas are valued by employers.
+- Opportunities for internships in big or international companies.
+
+---
+
+### Disadvantages of Top Universities and Big Cities
+
+- Higher competition for entry and during studies, harder to stand out.
+- Expensive accommodation, food, and entertainment.
+- Far from home and family — adaptation can be tough.
+- Risk of “getting lost in the crowd” in a big city without strong support.
+
+---
+
+### Advantages of a Local University (Vinnytsia, Dnipro)
+
+- Easier adaptation: familiar city, family and friends close by.
+- Lower costs for living.
+- Smaller groups, closer contact with professors.
+- Easier to get first internships and jobs in the local area.
+- Less stress from city bustle, more time for hobbies or self-development.
+
+---
+
+### Disadvantages of a Local University
+
+
+- Fewer specialties, less access to advanced labs and international projects.
+- Fewer student organizations and large-scale events.
+- Need to work harder for national or international opportunities.
+- Smaller cities sometimes offer fewer options for growth outside your main specialty.
 
 ---
 
 ## 2. International Attitude
 
-- Порівняння університетів за міжнародними рейтингами:
+- Comparison by international rankings:
     - Scopus Rank
     - Webometrics Rank
     - QS Rank
@@ -46,17 +154,25 @@ summary(ds3)
 
 ---
 
+## VNTU — Vinnytsia National Technical University
+
+- VNTU is the leading technical university in Vinnytsia and the region.
+- Focus: engineering, IT, energy, construction.
+- Strong ties to local business, modern facilities, active student life.
+- Chosen by graduates from Vinnytsia, Khmelnytskyi, Zhytomyr regions who want a strong degree in their home area.
+
+---
+
 ## "Top Universities" vs VNTU: Scopus Rank
 
 ``` {r}
 d1 <- ds3 %>% filter(school_abb %in% c("KPI", "KNUTS", "LKPI", "VNTU"))
 ggplot(d1, aes(x = school_abb, y = scopus_rank)) +
-  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "green", size = 5, shape = 21, alpha = 0.7) +
-  geom_point(data = filter(d1, school_abb != "VNTU"), size = 5, fill = "grey", color = "black", shape = 21) +
+  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "#FFEB3B", size = 6, shape = 21, alpha = 0.95, color = "#222") +
+  geom_point(data = filter(d1, school_abb != "VNTU"), size = 6, fill = "#00B8D9", color = "#BDBDBD", shape = 21, alpha = 0.9) +
   scale_y_reverse() +
-  geom_text(aes(label = school_abb), nudge_y = -2.5, color = "darkblue") +
-  theme_minimal() +
-  labs(x = "Університет", y = "Scopus Rank", title = "Scopus Ranking (VNTU vs Топ)")
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -2.5, color = "#FFF") +
+  labs(x = "University", y = "Scopus Rank", title = "Scopus Ranking (VNTU vs Top)")
 ```
 
 ---
@@ -65,12 +181,11 @@ ggplot(d1, aes(x = school_abb, y = scopus_rank)) +
 
 ``` {r}
 ggplot(d1, aes(x = school_abb, y = webometrics_rank)) +
-  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "green", size = 5, shape = 21, alpha = 0.7) +
-  geom_point(data = filter(d1, school_abb != "VNTU"), size = 5, fill = "grey", color = "black", shape = 21) +
+  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "#FFEB3B", size = 6, shape = 21, alpha = 0.95, color = "#222") +
+  geom_point(data = filter(d1, school_abb != "VNTU"), size = 6, fill = "#00B8D9", color = "#BDBDBD", shape = 21, alpha = 0.9) +
   scale_y_reverse() +
-  geom_text(aes(label = school_abb), nudge_y = -2.5, color = "darkblue") +
-  theme_minimal() +
-  labs(x = "Університет", y = "Webometrics Rank", title = "Webometrics Ranking")
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -2.5, color = "#FFF") +
+  labs(x = "University", y = "Webometrics Rank", title = "Webometrics Ranking")
 ```
 
 ---
@@ -79,12 +194,11 @@ ggplot(d1, aes(x = school_abb, y = webometrics_rank)) +
 
 ``` {r}
 ggplot(d1, aes(x = school_abb, y = qs_rank)) +
-  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "green", size = 5, shape = 21, alpha = 0.7) +
-  geom_point(data = filter(d1, school_abb != "VNTU"), size = 5, fill = "grey", color = "black", shape = 21) +
+  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "#FFEB3B", size = 6, shape = 21, alpha = 0.95, color = "#222") +
+  geom_point(data = filter(d1, school_abb != "VNTU"), size = 6, fill = "#00B8D9", color = "#BDBDBD", shape = 21, alpha = 0.9) +
   scale_y_reverse() +
-  geom_text(aes(label = school_abb), nudge_y = -0.5, color = "darkblue") +
-  theme_minimal() +
-  labs(x = "Університет", y = "QS Rank", title = "QS Ranking")
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -0.5, color = "#FFF") +
+  labs(x = "University", y = "QS Rank", title = "QS Ranking")
 ```
 
 ---
@@ -93,12 +207,11 @@ ggplot(d1, aes(x = school_abb, y = qs_rank)) +
 
 ``` {r}
 ggplot(d1, aes(x = school_abb, y = wur_rank)) +
-  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "green", size = 5, shape = 21, alpha = 0.7) +
-  geom_point(data = filter(d1, school_abb != "VNTU"), size = 5, fill = "grey", color = "black", shape = 21) +
+  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "#FFEB3B", size = 6, shape = 21, alpha = 0.95, color = "#222") +
+  geom_point(data = filter(d1, school_abb != "VNTU"), size = 6, fill = "#00B8D9", color = "#BDBDBD", shape = 21, alpha = 0.9) +
   scale_y_reverse() +
-  geom_text(aes(label = school_abb), nudge_y = -0.5, color = "darkblue") +
-  theme_minimal() +
-  labs(x = "Університет", y = "THE Rank", title = "Times Higher Education Ranking")
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -0.5, color = "#FFF") +
+  labs(x = "University", y = "THE Rank", title = "Times Higher Education Ranking")
 ```
 
 ---
@@ -107,13 +220,21 @@ ggplot(d1, aes(x = school_abb, y = wur_rank)) +
 
 ``` {r}
 ggplot(d1, aes(x = school_abb, y = qswur_rank)) +
-  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "green", size = 5, shape = 21, alpha = 0.7) +
-  geom_point(data = filter(d1, school_abb != "VNTU"), size = 5, fill = "grey", color = "black", shape = 21) +
+  geom_point(data = filter(d1, school_abb == "VNTU"), fill = "#FFEB3B", size = 6, shape = 21, alpha = 0.95, color = "#222") +
+  geom_point(data = filter(d1, school_abb != "VNTU"), size = 6, fill = "#00B8D9", color = "#BDBDBD", shape = 21, alpha = 0.9) +
   scale_y_reverse() +
-  geom_text(aes(label = school_abb), nudge_y = -0.5, color = "darkblue") +
-  theme_minimal() +
-  labs(x = "Університет", y = "QS Sustainability", title = "QS Sustainability Ranking")
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -0.5, color = "#FFF") +
+  labs(x = "University", y = "QS Sustainability", title = "QS Sustainability Ranking")
 ```
+
+---
+
+## NTUDP — Dnipro National Technical University of Railway Transport
+
+- NTUDP is the main technical university of Dnipro.
+- Specializes in transport, engineering, IT, and applied sciences.
+- Regionally significant, convenient for students from eastern and central Ukraine.
+- Often chosen by local school graduates wanting to stay in Dnipro or pursue technical specialties.
 
 ---
 
@@ -122,12 +243,11 @@ ggplot(d1, aes(x = school_abb, y = qswur_rank)) +
 ``` {r}
 d2 <- ds3 %>% filter(school_abb %in% c("KPI", "KNUTS", "LKPI", "NTUDP"))
 ggplot(d2, aes(x = school_abb, y = scopus_rank)) +
-  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "red", size = 5, shape = 21, alpha = 0.7) +
-  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 5, fill = "grey", color = "black", shape = 21) +
+  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "#FF5252", size = 6, shape = 21, alpha = 0.95, color = "#FFF") +
+  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 6, fill = "#00B8D9", color = "#BDBDBD", shape = 21, alpha = 0.9) +
   scale_y_reverse() +
-  geom_text(aes(label = school_abb), nudge_y = -2.5, color = "darkblue") +
-  theme_minimal() +
-  labs(x = "Університет", y = "Scopus Rank", title = "Scopus Ranking (NTUDP vs Топ)")
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -2.5, color = "#FFF") +
+  labs(x = "University", y = "Scopus Rank", title = "Scopus Ranking (NTUDP vs Top)")
 ```
 
 ---
@@ -136,12 +256,11 @@ ggplot(d2, aes(x = school_abb, y = scopus_rank)) +
 
 ``` {r}
 ggplot(d2, aes(x = school_abb, y = webometrics_rank)) +
-  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "red", size = 5, shape = 21, alpha = 0.7) +
-  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 5, fill = "grey", color = "black", shape = 21) +
+  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "#FF5252", size = 6, shape = 21, alpha = 0.95, color = "#FFF") +
+  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 6, fill = "#00B8D9", color = "#BDBDBD", shape = 21, alpha = 0.9) +
   scale_y_reverse() +
-  geom_text(aes(label = school_abb), nudge_y = -2.5, color = "darkblue") +
-  theme_minimal() +
-  labs(x = "Університет", y = "Webometrics Rank", title = "Webometrics Ranking")
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -2.5, color = "#FFF") +
+  labs(x = "University", y = "Webometrics Rank", title = "Webometrics Ranking")
 ```
 
 ---
@@ -150,12 +269,11 @@ ggplot(d2, aes(x = school_abb, y = webometrics_rank)) +
 
 ``` {r}
 ggplot(d2, aes(x = school_abb, y = qs_rank)) +
-  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "red", size = 5, shape = 21, alpha = 0.7) +
-  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 5, fill = "grey", color = "black", shape = 21) +
+  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "#FF5252", size = 6, shape = 21, alpha = 0.95, color = "#FFF") +
+  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 6, fill = "#00B8D9", color = "#BDBDBD", shape = 21, alpha = 0.9) +
   scale_y_reverse() +
-  geom_text(aes(label = school_abb), nudge_y = -0.5, color = "darkblue") +
-  theme_minimal() +
-  labs(x = "Університет", y = "QS Rank", title = "QS Ranking")
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -0.5, color = "#FFF") +
+  labs(x = "University", y = "QS Rank", title = "QS Ranking")
 ```
 
 ---
@@ -164,12 +282,11 @@ ggplot(d2, aes(x = school_abb, y = qs_rank)) +
 
 ``` {r}
 ggplot(d2, aes(x = school_abb, y = wur_rank)) +
-  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "red", size = 5, shape = 21, alpha = 0.7) +
-  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 5, fill = "grey", color = "black", shape = 21) +
+  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "#FF5252", size = 6, shape = 21, alpha = 0.95, color = "#FFF") +
+  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 6, fill = "#00B8D9", color = "#BDBDBD", shape = 21, alpha = 0.9) +
   scale_y_reverse() +
-  geom_text(aes(label = school_abb), nudge_y = -0.5, color = "darkblue") +
-  theme_minimal() +
-  labs(x = "Університет", y = "THE Rank", title = "Times Higher Education Ranking")
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -0.5, color = "#FFF") +
+  labs(x = "University", y = "THE Rank", title = "Times Higher Education Ranking")
 ```
 
 ---
@@ -178,82 +295,245 @@ ggplot(d2, aes(x = school_abb, y = wur_rank)) +
 
 ``` {r}
 ggplot(d2, aes(x = school_abb, y = qswur_rank)) +
-  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "red", size = 5, shape = 21, alpha = 0.7) +
-  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 5, fill = "grey", color = "black", shape = 21) +
+  geom_point(data = filter(d2, school_abb == "NTUDP"), fill = "#FF5252", size = 6, shape = 21, alpha = 0.95, color = "#FFF") +
+  geom_point(data = filter(d2, school_abb != "NTUDP"), size = 6, fill = "#00B8D9", color = "#BDBDBD", shape = 21, alpha = 0.9) +
   scale_y_reverse() +
-  geom_text(aes(label = school_abb), nudge_y = -0.5, color = "darkblue") +
-  theme_minimal() +
-  labs(x = "Університет", y = "QS Sustainability", title = "QS Sustainability Ranking")
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -0.5, color = "#FFF") +
+  labs(x = "University", y = "QS Sustainability", title = "QS Sustainability Ranking")
 ```
 
 ---
 
-## Висновки щодо рейтингів
-
-- Локальні університети зазвичай мають нижчі міжнародні позиції
-- Топ-університети — вибір для тих, хто прагне престижу та міжнародних можливостей
+## 3. Total University's Rank in 2024
 
 ---
 
-## 3. Chances to Get In
+### What is "Total University's Rank"?
 
-- Доступність вступу: кількість заяв, заяв на бюджет, середній бал вступника
+- The EuroOsvita 2024 total rank is the most authoritative national university ranking.
+- It combines multiple metrics: international reputation, research, student success, and innovation.
+- Used by applicants, employers, and policymakers to assess university quality.
 
 ---
 
-### Кількість поданих заяв (всього)
+### Why Does It Matter?
+
+- <span class="fragment highlight-current-blue" style="color:#FFC300;font-weight:bold">For graduates</span>: Helps to understand not only "big names", but real performance.<br>
+- <span class="fragment highlight-current-blue" style="color:#FFC300;font-weight:bold">For families</span>: Indicates where your investment in education will give the best result.<br>
+- <span class="fragment highlight-current-blue" style="color:#FFC300;font-weight:bold">For universities</span>: Shows areas for growth and competition.
+
+---
+
+### How Do Local and Top Universities Compare?
+
+- Top universities (KPI, KNUTS, LKPI) usually dominate the upper ranks.
+- Local leaders (like VNTU, NTUDP) can outperform some "big" universities in focused specialties or regional impact.
+- The "total" rank shows the real position of your future diploma on the Ukrainian market.
+
+
+---
+
+### Where Do "Top" and "Local" Universities Stand?
 
 ``` {r}
-d3 <- ds3 %>% filter(school_abb %in% c("KPI", "KNUTS", "LKPI", "NTUDP", "VNTU"))
-ggplot(d3, aes(x = school_abb, y = application_total_count)) +
-  geom_col(fill = "steelblue", alpha = 0.7) +
-  geom_text(aes(label = application_total_count), vjust = -0.5) +
-  theme_minimal() +
-  labs(x = "Університет", y = "Всього заяв", title = "Кількість поданих заяв")
+selected_unis <- c("VNTU", "KPI", "LKPI", "KNUTS", "NTUDP")
+ds3 %>% 
+  filter(school_abb %in% selected_unis) %>%
+  ggplot(aes(x = reorder(school_abb, rank_2024), y = rank_2024)) +
+  geom_point(shape = 21, color = "white", size = 8, fill = "#00B8D9", alpha = 0.7) +
+  geom_point(data = ds3 %>% filter(school_abb == "VNTU"), fill = "red", shape = 21, size = 8, color = "white", alpha = 0.9) +
+  geom_point(data = ds3 %>% filter(school_abb == "NTUDP"), fill = "green", shape = 21, size = 8, color = "white", alpha = 0.9) +
+  geom_text(aes(label = school_abb), fontface = "bold", size = 6, nudge_y = -2.5, color = "#FFF") +
+  scale_y_reverse() +
+  labs(
+    title = "Rank 2024 for Selected Universities",
+    x = "Abbreviation",
+    y = "Place (Lower = Better)"
+  )
 ```
 
 ---
 
-### Кількість заяв на бюджет
+### Key Takeaways
+
+- "Top" universities secure leading places, but local leaders are not far behind.
+- Choosing a university is about balancing ambition, comfort, and real prospects — not just chasing the top spot in the rankings!
+- Always consider your own goals and values when reading the rankings.
+
+---
+
+## 4. Chances to Get In
+
+---
+
+### Total Applications
 
 ``` {r}
-ggplot(d3, aes(x = school_abb, y = application_budget_count)) +
-  geom_col(fill = "seagreen3", alpha = 0.7) +
-  geom_text(aes(label = application_budget_count), vjust = -0.5) +
-  theme_minimal() +
-  labs(x = "Університет", y = "Заяв на бюджет", title = "Кількість заяв на бюджет")
+d4 <- ds3 %>% filter(school_abb %in% c("KPI", "KNUTS", "LKPI", "NTUDP", "VNTU"))
+ggplot(d4, aes(x = school_abb, y = application_total_count)) +
+  geom_col(fill = "#26C6DA", alpha = 0.82, color = "#121212") +
+  geom_text(aes(label = application_total_count), 
+            vjust = 1.5, size = 6, color = "#FFFDE7", fontface = "bold") +
+  labs(x = "University", y = "Total Applications", title = "Total Applications")
 ```
 
 ---
 
-### Середній бал вступників
+### Budget Applications
 
 ``` {r}
-ggplot(d3, aes(x = school_abb, y = score_mean)) +
-  geom_col(fill = "orange", alpha = 0.7) +
-  geom_text(aes(label = round(score_mean, 2)), vjust = -0.5) +
-  theme_minimal() +
-  labs(x = "Університет", y = "Середній бал", title = "Середній бал вступників")
+ggplot(d4, aes(x = school_abb, y = application_budget_count)) +
+  geom_col(fill = "#66BB6A", alpha = 0.84, color = "#121212") +
+  geom_text(aes(label = application_budget_count), 
+            vjust = 1.5, size = 6, color = "#FFFDE7", fontface = "bold") +
+  labs(x = "University", y = "Budget Applications", title = "Budget Applications")
 ```
 
 ---
 
-## 4. University's Activity
+### Average Admission Score
 
-- Важливість наукової, соціальної та бізнес-активності
-- Додаткові можливості для студентів
+``` {r}
+ggplot(d4, aes(x = school_abb, y = score_mean)) +
+  geom_col(fill = "#FFA726", alpha = 0.82, color = "#121212") +
+  geom_text(aes(label = round(score_mean, 2)), 
+            vjust = 1.5, size = 6, color = "#FFFDE7", fontface = "bold") +
+  labs(x = "University", y = "Average Score", title = "Average Admission Score")
+```
+
+---
+
+## 5. University's Activity
+
+- Importance of scientific, social, and business activity.
+- Additional opportunities for students.
+
+---
+
+
+## 6. Local Universities in Their Areas
+
+---
+
+### Why Compare Locally?
+
+- National rankings show the “big picture,” but for most students, local reputation and options matter most.
+- Let’s look at how VNTU and NTUDP stand out among all universities in their own regions.
+
+---
+
+### VNTU in Vinnytsia Region
+
+- Vinnytsia region has several higher education institutions, but only one major technical university: VNTU.
+- VNTU consistently ranks as the **#1 university in Vinnytsia oblast** in most years.
+- Its regional leadership gives students an advantage in local industry, jobs, and innovation projects.
+
+---
+
+### Where Does VNTU Stand Locally?
+
+``` {r}
+# Filter Vinnytsia oblast universities and sort by rank_2024
+vinnytsia_unis <- ds3 %>% filter(oblast == "Vinnytsia", !is.na(rank_2024)) %>%
+  arrange(rank_2024)
+ggplot(vinnytsia_unis, aes(x = reorder(school_abb, rank_2024), y = rank_2024, fill = (school_abb == "VNTU"))) +
+  geom_col(width = 0.65, color = "#121212", alpha = 0.88, show.legend = FALSE) +
+  scale_fill_manual(values = c(`TRUE` = "#FFC300", `FALSE` = "#0099CC")) +
+  geom_text(aes(label = rank_2024), vjust = -.65, size = 6, color = "#FFFDE7", fontface = "bold") +
+  scale_y_reverse() +
+  labs(
+    title = "Universities in Vinnytsia Oblast by Total Rank (2024)",
+    x = "University (abbr.)",
+    y = "Rank (lower is better)"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    panel.background = element_rect(fill = "#171a21", color = NA),
+    plot.background = element_rect(fill = "#171a21", color = NA),
+    plot.title = element_text(face = "bold", hjust = 0.5, size = 22, color = "#FFF"),
+    axis.title = element_text(size = 16, color = "#AEEFFF"),
+    axis.text = element_text(size = 14, color = "#E1E8ED"),
+    panel.grid.major = element_line(color = "#223", size = 0.5),
+    panel.grid.minor = element_blank()
+  )
+```
+
+---
+
+### Local Insights: Vinnytsia
+
+- <span class="fragment highlight-current-blue" style="color:#FFC300;font-weight:bold">VNTU</span> is not just a local leader—it’s the clear top choice for technical and engineering careers in the oblast.
+- The gap between VNTU and other Vinnytsia universities is significant, especially in technology fields.
+- Employers in the region often prioritize VNTU graduates.
+
+---
+
+### NTUDP in Dnipropetrovsk Region
+
+- Dnipropetrovsk oblast has many universities, including national and medical institutions.
+- NTUDP is the **#1 technical university in the region**—often top-3 overall in the oblast.
+- The city of Dnipro is a major educational center in eastern Ukraine.
+
+---
+
+### Where Does NTUDP Stand Locally?
+
+``` {r}
+# Filter Dnipropetrovsk oblast universities and sort by rank_2024
+dnipro_unis <- ds3 %>% filter(oblast == "Dnipropetrovsk", !is.na(rank_2024)) %>%
+  arrange(rank_2024)
+ggplot(dnipro_unis, aes(x = reorder(school_abb, rank_2024), y = rank_2024, fill = (school_abb == "NTUDP"))) +
+  geom_col(width = 0.65, color = "#121212", alpha = 0.88, show.legend = FALSE) +
+  scale_fill_manual(values = c(`TRUE` = "#44e350", `FALSE` = "#0099CC")) +
+  geom_text(
+    aes(label = rank_2024),
+    vjust = -0.5,
+    size = 4,
+    color = "#FFFDE7",
+    fontface = "bold"
+  ) +
+  scale_y_reverse(expand = expansion(mult = c(0.05, 0.15))) +
+  labs(
+    title = "Universities in Dnipropetrovsk Oblast by Total Rank (2024)",
+    x = "University (abbr.)",
+    y = "Rank (lower is better)"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    panel.background = element_rect(fill = "#171a21", color = NA),
+    plot.background = element_rect(fill = "#171a21", color = NA),
+    plot.title = element_text(face = "bold", hjust = 0.5, size = 22, color = "#FFF"),
+    axis.title = element_text(size = 16, color = "#AEEFFF"),
+    axis.text = element_text(size = 14, color = "#E1E8ED"),
+    axis.text.x = element_text(size = 9, color = "#E1E8ED"),  # Abbreviation smaller here!
+    panel.grid.major = element_line(color = "#223", size = 0.5),
+    panel.grid.minor = element_blank(),
+    plot.margin = margin(20, 30, 20, 30)
+  )
+
+```
+
+---
+
+### Local Insights: Dnipro
+
+- <span class="fragment highlight-current-blue" style="color:#44e350;font-weight:bold">NTUDP</span> is a strong regional player and recognized technical leader in Dnipropetrovsk oblast.
+- Dnipro offers many choices, but NTUDP’s niche in transport, engineering, and applied sciences sets it apart.
+- For technical careers in the region, NTUDP’s diploma is highly valued by employers.
+
+---
+
+### Conclusions for Local Choices
+
+- Both <span style="color:#FFC300;font-weight:bold">VNTU</span> (Vinnytsia) and <span style="color:#44e350;font-weight:bold">NTUDP</span> (Dnipro) are the clear top choices for technical education in their home oblasts.
+- When considering where to study, check both the **national** and **local** rankings to maximize your future opportunities!
 
 ---
 
 ## Summary & Recommendations
 
-- Обирайте університет свідомо: орієнтуйтесь на власні цілі та дані
-- Топові університети — більше можливостей і престиж
-- Місцеві — легший вступ, комфортне середовище
+- Choose your university wisely: base your decision on your own goals and the data.
+- Top universities = more opportunities and prestige.
+- Local universities = easier entry, comfort, community.
 
----
-
-## Questions?
-
-Дякую за увагу!
 
