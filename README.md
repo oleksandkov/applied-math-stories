@@ -16,7 +16,7 @@ A series of data explorations into rankings of Ukrainian universities in 2024. W
 
 - [University ranking-3](https://raw.githack.com/olesandr-k/applied-math-stories/refs/heads/main/analysis/university-ranking/university-ranking-3.html) - Story 3. Geography
 
-- [Comparing Universities (V2)](https://raw.githack.com/olesandr-k/applied-math-stories/refs/heads/main/analysis/university-ranking/comparing-universities-v2.html) - Comparing "Top" and Local Universities in Ukraine
+- [Comparing Universities (V2)]([https://raw.githack.com/olesandr-k/applied-math-stories/refs/heads/main/analysis/university-ranking/comparing-universities-v2.html](https://raw.githack.com/oleksandkov/applied-math-stories/9928e378ce1288ca6dd354ad48fc719fc5129282/analysis/university-ranking/comparing-universities-v2.html)) - Comparing "Top" and Local Universities in Ukraine
 
 ### Unstructed Explorations 
 
