@@ -16,6 +16,8 @@ A series of data explorations into rankings of Ukrainian universities in 2024. W
 
 - [University ranking-3](https://raw.githack.com/olesandr-k/applied-math-stories/refs/heads/main/analysis/university-ranking/university-ranking-3.html) - Story 3. Geography
 
+- [Comparing Universities (V2)](https://raw.githack.com/olesandr-k/applied-math-stories/refs/heads/main/analysis/university-ranking/comparing-universities-v2.html) - Comparing "Top" and Local Universities in Ukraine
+
 ### Unstructed Explorations 
 
 - [2-eda-1](https://raw.githack.com/olesandr-k/applied-math-stories/main/analysis/university-ranking/2-eda-1.html) - Applications and rank. Location is important? Student and application counts. Geography of Education.
