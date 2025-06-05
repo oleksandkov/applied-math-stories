@@ -1,0 +1,1291 @@
+---
+title: "Comparing 'Top' and Local Universities in Ukraine"
+author: "Oleksandr Koval"
+format:
+  revealjs:
+    theme: night
+    slide-number: true
+    toc: false
+    transition: fade  
+    self-contained: true
+---
+
+# Introduction
+
+Story of Creating
+
+<span class="fragment" style="color:#5CFF6A; font-weight:bold;">Why did I create this presentation?</span>  
+There are lots of opportunities to continue your education nowadays. If you used to have only a few main universities to attend, now almost every region has its local universities offering different specializations. 
+<span class="fragment" style="color:#5CFF6A; font-weight:bold;">So, where would you go?</span>
+
+
+
+## “TOP UNIVERSITIES” VS LOCAL UNIVERSITY
+
+<span style="color:#5CFF6A; font-weight:900; font-size:1.18em;">Short introduction</span>
+
+As a top university, I took three of the biggest Ukrainian national universities that have a strong base of all specializations. As a local one, I took polytechnic universities that are located in the big cities of Ukraine (Dnipro, Odesa, Vinnytsia) but we can’t name them “top”.
+
+
+
+
+# OUR GUESTS
+
+::: columns
+::: column
+
+**Team “TOP UNIVERSITIES”:**
+
+- <span class="fragment" style="color:#5CFF6A; font-weight:bold;">KPI</span>
+- <span class="fragment" style="color:#5CFF6A; font-weight:bold;">KNUTS</span>
+- <span class="fragment" style="color:#5CFF6A; font-weight:bold;">LKPI</span>
+
+:::
+::: column
+
+**Team “Local universities”:**
+
+- <span class="fragment" style="color:#5CFF6A; font-weight:bold;">VNTU</span>
+- <span class="fragment" style="color:#5CFF6A; font-weight:bold;">NTUDP</span>
+- <span class="fragment" style="color:#5CFF6A; font-weight:bold;">NUOPL</span>
+
+:::
+:::
+
+# Location
+
+Map of key "Top" and Local Universities in Ukraine
+
+``` {r}
+library(tidyverse)
+library(maps)
+library(ggplot2)
+
+# Дані університетів (KPI, KNUTS разом у Києві)
+unis <- tibble(
+  school_abb = c("KPI, KNUTS", "LKPI", "VNTU", "NTUDP", "NUOPL"),
+  city = c("Kyiv", "Lviv", "Vinnytsia", "Dnipro", "Odesa"),
+  lon = c(30.467, 24.031, 28.467, 35.045, 30.723),
+  lat = c(50.443, 49.832, 49.234, 48.464, 46.482),
+  type = c("Top", "Top", "Local", "Local", "Local")
+)
+
+ua_map <- map_data("world", region = "Ukraine")
+
+# "Local" label coordinates (bottom left)
+
+ggplot() +
+  geom_polygon(
+    data = ua_map,
+    aes(x = long, y = lat, group = group),
+    fill = "#23233e", color = "#8f8f8f", size = 1, alpha = 0.93
+  ) +
+  geom_point(
+    data = unis, aes(x = lon, y = lat, color = school_abb),
+    size = 7, show.legend = TRUE
+  ) +
+  geom_text(
+    data = unis, aes(x = lon, y = lat, label = school_abb, color = school_abb),
+    vjust = -1, size = 6, fontface = "bold", show.legend = FALSE
+  ) +
+  geom_text(
+    data = unis, aes(x = lon, y = lat, label = city),
+    vjust = 1.5, size = 5, color = "gray70", fontface = "italic", show.legend = FALSE
+  ) +
+  scale_color_manual(
+    name = "Abbs",
+    values = c(
+      "KPI, KNUTS" = "#e67e22",
+      "LKPI" = "#e74c3c",
+      "VNTU" = "#27ae60",
+      "NTUDP" = "#2980b9",
+      "NUOPL" = "#8e44ad"
+    )
+  ) +
+  guides(color = guide_legend(override.aes = list(size = 7, shape = 16))) +
+  theme_void(base_size = 16) +
+  theme(
+    plot.background = element_rect(fill = "#181818", color = NA),
+    panel.background = element_rect(fill = "#181818", color = NA),
+    legend.background = element_rect(fill = "#181818", color = NA),
+    legend.text = element_text(color = "#f7f7ee"),
+    legend.title = element_text(color = "#f7f7ee")
+  ) +
+  labs(title = "")
+```
+
+
+
+
+
+
+## By the end, we want to know…
+
+<ul style="list-style-type: disc; margin-left: 1.3em;">
+  <li class="fragment" style="color:#5CFF6A; font-weight:bold; margin-bottom: 2em;">
+    Is a “top” university really worth it<span style="color:#fff;"> ?</span>
+  </li>
+  <li class="fragment" style="color:#5CFF6A; font-weight:bold; margin-bottom: 2em;">
+    Where would be better to go<span style="color:#fff;"> ?</span>
+  </li>
+  <li class="fragment" style="color:#5CFF6A; font-weight:bold; margin-bottom: 2em;">
+    Why “top” university is “Top”<span style="color:#fff;"> ?</span>
+  </li>
+  <li class="fragment" style="color:#5CFF6A; font-weight:bold; margin-bottom: 2em;">
+    Is a local university worth it<span style="color:#fff;"> ?</span>
+  </li>
+  <li class="fragment" style="color:#5CFF6A; font-weight:bold;">
+    Where will you find your dream<span style="color:#fff;"> ?</span>
+  </li>
+</ul>
+
+
+
+
+
+# Data overview
+
+## Data Overview
+
+
+All information was taken from <span style="color:#FFD600; font-weight:bold;">1-scribe</span>
+
+It contains all used data in this presentation
+
+
+
+
+## Data Overview
+
+<span style="color:#FFD600; font-weight:bold;">Source:</span> 1-scribe-ds3.rds  
+<span style="color:#FFD600; font-weight:bold;">Main table:</span> ds3  
+<span style="color:#FFD600; font-weight:bold;">Rows:</span> 200  
+<span style="color:#FFD600; font-weight:bold;">Columns:</span> 36  
+<span style="color:#FFD600; font-weight:bold;">Columns that we use:</span> rank_2024, qs_rank, scopus_rank, webometrics_rank, wur_rank, qswur_rank, school_abb, student_count, city, application_total_count, application_budget_count, score_mean
+
+
+
+
+
+## Data Overview
+
+***ds3*** - <span style="color:#FFD600; font-weight:bold;">data %>% glimpse()</span> 
+
+``` {r}
+library(tidyverse)
+ds3 <- readRDS('../../data-private/derived/university-ranking/1-scribe-ds3.rds')
+glimpse(ds3)
+```
+
+
+## Data Overview
+
+***ds3*** - <span style="color:#FFD600; font-weight:bold;">data %>%  summary()</span> 
+
+
+``` {r}
+summary(ds3)
+```
+
+
+
+# Rating system
+
+## Chapters of this presentation
+
+- 🌍 <span style="color:#4DD0E1; font-weight:bold;">The importance of location</span>
+- 📝 <span style="color:#81C784; font-weight:bold;">Chances to get in</span>
+- 🏆 <span style="color:#FFD600; font-weight:bold;">National rank</span>
+- 🏙️ <span style="color:#FFB74D; font-weight:bold;">Local university comparison:</span>
+    - <span style="font-weight:bold; color:#FFB74D;">Local rank</span>
+    - <span style="font-weight:bold; color:#FFB74D;">Local size</span>
+    - <span style="font-weight:bold; color:#FFB74D;">Local score to apply</span>
+- 🌐 <span style="color:#BA68C8; font-weight:bold;">International attitude</span>
+
+
+
+
+# 1 | The importance of location
+
+Imagine that you just graduated from school. You passed your exams very well.  
+The first thing you note when you are looking at your future university is the city, where it's located.
+
+
+
+## Map of the Local Universities
+``` {r}
+library(tidyverse)
+library(maps)
+library(ggplot2)
+library(grid) # for unit()
+
+# Дані університетів (KPI, KNUTS разом у Києві)
+unis <- tibble(
+  school_abb = c("KPI, KNUTS", "LKPI", "VNTU", "NTUDP", "NUOPL"),
+  city = c("Kyiv", "Lviv", "Vinnytsia", "Dnipro", "Odesa"),
+  lon = c(30.467, 24.031, 28.467, 35.045, 30.723),
+  lat = c(50.443, 49.832, 49.234, 48.464, 46.482),
+  type = c("Top", "Top", "Local", "Local", "Local")
+)
+
+ua_map <- map_data("world", region = "Ukraine")
+
+# "Local" label coordinates (bottom left)
+local_label <- tibble(
+  lon = 23,
+  lat = 46,
+  label = "Local"
+)
+
+# Only local universities
+local_unis <- unis %>% filter(type == "Local")
+
+# Calculate arrow start (e.g., 30%) and end (e.g., 60%) between Local and each uni
+start_factor <- 0.3
+end_factor <- 0.6
+arrow_data <- local_unis %>%
+  mutate(
+    x_start = 23 + (lon - 23) * start_factor,
+    y_start = 46 + (lat - 46) * start_factor,
+    x_end   = 23 + (lon - 23) * end_factor,
+    y_end   = 46 + (lat - 46) * end_factor
+  )
+
+ggplot() +
+  geom_polygon(
+    data = ua_map,
+    aes(x = long, y = lat, group = group),
+    fill = "#23233e", color = "#8f8f8f", size = 1, alpha = 0.93
+  ) +
+  geom_point(
+    data = unis, aes(x = lon, y = lat, color = school_abb),
+    size = 7, show.legend = TRUE
+  ) +
+  geom_text(
+    data = unis, aes(x = lon, y = lat, label = school_abb, color = school_abb),
+    vjust = -1, size = 6, fontface = "bold", show.legend = FALSE
+  ) +
+  geom_text(
+    data = unis, aes(x = lon, y = lat, label = city),
+    vjust = 1.5, size = 5, color = "gray70", fontface = "italic", show.legend = FALSE
+  ) +
+  geom_text(
+    data = local_label, aes(x = lon, y = lat, label = label),
+    size = 8, color = "white", fontface = "bold"
+  ) +
+  # Short, mid-span white arrows!
+  geom_curve(
+    data = arrow_data,
+    aes(
+      x = x_start, y = y_start,
+      xend = x_end, yend = y_end
+    ),
+    color = "white", size = 2,
+    curvature = 0.15, arrow = arrow(length = unit(0.23, "inches")),
+    show.legend = FALSE
+  ) +
+  scale_color_manual(
+    name = "Abbs",
+    values = c(
+      "KPI, KNUTS" = "#e67e22",
+      "LKPI" = "#e74c3c",
+      "VNTU" = "#27ae60",
+      "NTUDP" = "#2980b9",
+      "NUOPL" = "#8e44ad"
+    )
+  ) +
+  guides(color = guide_legend(override.aes = list(size = 7, shape = 16))) +
+  theme_void(base_size = 16) +
+  theme(
+    plot.background = element_rect(fill = "#181818", color = NA),
+    panel.background = element_rect(fill = "#181818", color = NA),
+    legend.background = element_rect(fill = "#181818", color = NA),
+    legend.text = element_text(color = "#f7f7ee"),
+    legend.title = element_text(color = "#f7f7ee"),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+  panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  ) +
+  labs(title = "")
+```
+
+
+
+
+
+
+## Why it is so important?
+
+Your university city is not just about education – <span style="color:#5CFF6A; font-weight:bold;">it’s your lifestyle for 4–6 years.</span>
+
+<br>
+
+Think about how you will live without your <span style="color:#5CFF6A; font-weight:bold;">friends</span> and <span style="color:#5CFF6A; font-weight:bold;">family</span>.
+
+<br>
+
+<span class="fragment" style="color:#5CFF6A; font-weight:bold;">What would you do if something went wrong?</span>
+
+<span class="fragment" style="color:#5CFF6A; font-weight:bold;">Are you the kind of person who can make new friends quickly, or not?</span>
+
+
+
+
+## PROS & CONS BIG CITY
+
+Think logically: <span class="fragment" style="color:#5CFF6A; font-weight:bold;">Big city = big opportunities</span>
+
+- In a big city, there are more chances to be noticed by big or international companies
+
+- Universities are more modern, with stronger academic programs
+
+- Risk of “getting lost in the crowd”
+
+- Expensive accommodation, food, and entertainment
+
+- Higher competition for entry and during studies, making it harder to stand out
+
+
+
+## PROS & CONS LIVING HOME
+
+<span class="fragment" style="color:#5CFF6A; font-weight:bold;">It is your home! </span>
+
+
+- Familiar city, close to your family and friends. They can help you and support you in trouble  
+- You haven’t got a “period of adaptation” or it would be far shorter than in a big city  
+- You may have “the feeling of missed opportunity”  
+- You have fewer contacts with international companies  
+- Less perspective than in a big city
+
+
+# Overall
+
+Living in a big city can be hard, and for some people, it can be very difficult to meet new friends or live alone. However, for everyone, it is a very useful experience that absolutely must be felt by all young adults.
+
+Living in your hometown is easier, and you don't need to make as much effort in your daily life. It is more stable.
+
+
+
+# 2 | Chances to get in
+
+The second thing you check after considering the city is whether you have the opportunity to become part of the team.
+
+<span class="fragment" style="color:#5CFF6A; font-weight:bold;">How many other people are thinking the same as you?</span>
+
+<span class="fragment" style="color:#5CFF6A; font-weight:bold;">What if you are short of money?</span>
+
+<span class="fragment" style="color:#5CFF6A; font-weight:bold;">Will your average score be enough?</span>
+
+
+
+## №1 Total number of applications
+
+``` {r}
+guest_abbs <- c("KPI", "KNUTS", "LKPI", "VNTU", "NTUDP", "NUOPL")
+ggplot(
+  ds3 %>% filter(school_abb %in% guest_abbs),
+  aes(x = reorder(school_abb, -application_total_count), y = application_total_count, fill = school_abb)
+) +
+  geom_col(width = 0.7, color = "#222", alpha = 0.95, show.legend = FALSE) +
+  geom_text(
+    aes(label = application_total_count), 
+    vjust = 0, # move the label down below the x axis
+    size = 7, color = "yellow", fontface = "bold",
+    position = position_nudge(y = -3000) # nudge further down, adjust value as needed
+  ) +
+  labs(
+    title = "Total Number of Applications",
+    x = "University (abbr.)",
+    y = "Applications"
+  ) +
+  scale_x_discrete(expand = expansion(add = 0.8)) + # add space to x axis
+  scale_y_continuous(breaks = seq(0, 40000, 5000)) + # add y axis breaks
+  theme_minimal(base_size = 20) +
+  theme(
+    plot.background = element_rect(fill = "#181818"),
+    panel.background = element_rect(fill = "#181818"),
+    plot.title = element_text(color = "white", size = 24, face = "bold"),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+  panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7),
+    axis.text = element_text(color = "#fff", size = 16),
+    axis.title = element_text(color = "#66e2ff", size = 20)
+  )
+```
+
+
+
+
+
+## №2 Number of applications on Budget
+
+``` {r}
+guest_abbs <- c("KPI", "KNUTS", "LKPI", "VNTU", "NTUDP", "NUOPL")
+ggplot(
+  ds3 %>% filter(school_abb %in% guest_abbs),
+  aes(x = reorder(school_abb, -application_budget_count), y = application_budget_count, fill = school_abb)
+) +
+  geom_col(width = 0.7, color = "#222", alpha = 0.95, show.legend = FALSE) +
+  geom_text(
+    aes(label = application_budget_count),
+    vjust = 0,
+    size = 7, color = "yellow", fontface = "bold",
+    position = position_nudge(y = -3000)
+  ) +
+  labs(
+    title = "Number of Applications on Budget",
+    x = "University (abbr.)",
+    y = "Budget Applications"
+  ) +
+  scale_x_discrete(expand = expansion(add = 0.8)) +
+  scale_y_continuous(breaks = seq(0, 25000, 2500)) +
+  theme_minimal(base_size = 20) +
+  theme(
+    plot.background = element_rect(fill = "#181818"),
+    panel.background = element_rect(fill = "#181818"),
+    plot.title = element_text(color = "white", size = 24, face = "bold"),
+    axis.text = element_text(color = "#fff", size = 16),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+  # Minor grid lines, vertical (x)
+  panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7),
+    axis.title = element_text(color = "#66e2ff", size = 20)
+  )
+```
+
+
+
+## №3 Number of budget applications to non-budget
+
+``` {r}
+ds3 %>%
+  filter(school_abb %in% guest_abbs) %>%
+  mutate(ratio = application_budget_count / application_total_count) %>%
+  ggplot(aes(x = reorder(school_abb, -ratio), y = ratio, fill = school_abb)) +
+  geom_col(width = 0.7, color = "#222", alpha = 0.95, show.legend = FALSE) +
+  geom_text(
+    aes(label = scales::percent(ratio, accuracy = 1)),
+    vjust = 0,
+    size = 7, color = "yellow", fontface = "bold",
+    position = position_nudge(y = -0.09)
+  ) +
+  labs(
+    title = "Ratio: Budget Applications to Total",
+    x = "University (abbr.)",
+    y = "Budget/Total Ratio"
+  ) +
+  scale_x_discrete(expand = expansion(add = 0.8)) +
+  scale_y_continuous(breaks = seq(0, 1, 0.1), labels = scales::percent_format(accuracy = 1)) +
+  theme_minimal(base_size = 20) +
+  theme(
+    plot.background = element_rect(fill = "#181818"),
+    panel.background = element_rect(fill = "#181818"),
+    plot.title = element_text(color = "white", size = 24, face = "bold"),
+    axis.text = element_text(color = "#fff", size = 16),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+  # Minor grid lines, vertical (x)
+  panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7),
+    axis.title = element_text(color = "#66e2ff", size = 20)
+  )
+```
+
+
+## №3-1 Number of budget applications to non-budget
+
+``` {r}
+ds3 %>%
+  filter(school_abb %in% guest_abbs) %>%
+  mutate(
+    non_budget = application_total_count - application_budget_count,
+    ratio = ifelse(non_budget == 0, NA, application_budget_count / non_budget)
+  ) %>%
+  ggplot(aes(x = reorder(school_abb, -ratio), y = ratio, fill = school_abb)) +
+  geom_col(width = 0.7, color = "#222", alpha = 0.95, show.legend = FALSE) +
+  geom_text(
+    aes(label = round(ratio, 2)),
+    vjust = 1,
+    size = 7, color = "yellow", fontface = "bold",
+    position = position_nudge(y = -0.09)
+  ) +
+  labs(
+    title = "Budget Applications per 1 Non-Budget Application",
+    x = "University (abbr.)",
+    y = "Budget to Non-Budget Ratio"
+  ) +
+  scale_x_discrete(expand = expansion(add = 0.8)) +
+  scale_y_continuous(breaks = seq(0, 10, 1)) +
+  theme_minimal(base_size = 20) +
+  theme(
+    plot.background = element_rect(fill = "#181818"),
+    panel.background = element_rect(fill = "#181818"),
+    plot.title = element_text(color = "white", size = 24, face = "bold"),
+    axis.text = element_text(color = "#fff", size = 16),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+  # Minor grid lines, vertical (x)
+  panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7),
+    axis.title = element_text(color = "#66e2ff", size = 20)
+  )
+```
+
+
+## №4 The average score
+
+``` {r}
+ggplot(
+  ds3 %>% filter(school_abb %in% guest_abbs),
+  aes(x = reorder(school_abb, -score_mean), y = score_mean, fill = school_abb)
+) +
+  geom_col(width = 0.7, color = "#222", alpha = 0.95, show.legend = FALSE) +
+  geom_text(
+    aes(label = round(score_mean, 1)),
+    vjust = 1.5,
+    size = 7, color = "yellow", fontface = "bold",
+    position = position_nudge(y = -1)
+  ) +
+  labs(
+    title = "Average Admission Score",
+    x = "University (abbr.)",
+    y = "Average Score"
+  ) +
+  scale_x_discrete(expand = expansion(add = 0.8)) +
+  scale_y_continuous(
+    breaks = c(0, 50, 100, 150, 200),
+    limits = c(0, 200)
+  ) +
+  theme_minimal(base_size = 20) +
+  theme(
+    plot.background = element_rect(fill = "#181818", color = NA),
+    panel.background = element_rect(fill = "#181818", color = NA),
+    plot.title = element_text(color = "white", size = 24, face = "bold"),
+    axis.text = element_text(color = "#fff", size = 16),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+  # Minor grid lines, vertical (x)
+  panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7),
+    axis.title = element_text(color = "#66e2ff", size = 20)
+  )
+```
+
+
+
+# 3 | National Rank
+
+<span class="fragment" style="color:#5CFF6A; font-weight:bold;">What is it?</span>
+
+<span class="fragment">
+The national rank according to EuroOsvita is the most authoritative rank in the country. We have over 200 universities in this rank. This rank is based on different ranks, including foreign and national.
+</span>
+
+
+
+## “Top” Universities VS Local
+
+``` {r}
+ggplot(
+  ds3 %>% filter(school_abb %in% guest_abbs),
+  aes(x = reorder(school_abb, rank_2024), y = rank_2024, fill = school_abb)
+) +
+  geom_col(width = 0.7, color = "#222", alpha = 0.88, show.legend = FALSE) +
+  geom_text(aes(label = rank_2024), vjust = 1.1, hjust = -1, size = 7, color = "yellow", fontface = "bold") +
+  scale_y_reverse(
+    breaks = seq(0, 40, 10),
+    limits = c(40, 0)
+  ) +
+  labs(
+    title = "National Rank 2024: Top vs Local Universities",
+    x = "University (abbr.)",
+    y = "Rank (lower is better)"
+  ) +
+  theme_minimal(base_size = 20) +
+  theme(
+    plot.background = element_rect(fill = "#181818"),
+    panel.background = element_rect(fill = "#181818"),
+    plot.title = element_text(color = "white", size = 24, face = "bold"),
+    axis.text = element_text(color = "#fff", size = 16),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+  # Minor grid lines, vertical (x)
+  panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7),
+    axis.title = element_text(color = "#66e2ff", size = 20)
+  )
+```
+
+
+
+
+# 4 | Comparing Locally
+
+<span class="fragment" style="color:#5CFF6A; font-weight:bold;">When you have checked your chances to get in and seen the big picture, what do you want to do next?</span>
+
+In my opinion, it’s a good idea to consider other university options in your city.
+
+In this chapter, we compare all universities in Odesa, Vinnytsia, and Dnipro.
+
+
+
+## Universities in the Vinnytsia | EuroOsvita
+
+``` {r}
+vin_unis <- ds3 %>% filter(oblast == "Vinnytsia", !is.na(rank_2024)) %>%
+  arrange(rank_2024)
+ggplot(vin_unis, aes(x = reorder(school_abb, rank_2024), y = rank_2024, fill = (school_abb == "VNTU"))) +
+  geom_col(width = 0.65, color = "#121212", alpha = 0.88, show.legend = FALSE) +
+  scale_fill_manual(values = c(`TRUE` = "#44e350", `FALSE` = "#0099CC")) +
+  geom_text(aes(label = rank_2024), vjust = 1.7, size = 6, color = "yellow", fontface = "bold") +
+  scale_y_reverse(
+    breaks = seq(0, 150, 30),
+    limits = c(150, 0)
+  ) +
+  labs(
+    title = "Universities in Vinnytsia by Total Rank (2024)",
+    x = "University (abbr.)",
+    y = "Rank (lower is better)"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    plot.background = element_rect(fill = "#181818"),
+    panel.background = element_rect(fill = "#181818"),
+    plot.title = element_text(color = "white"),
+    axis.text = element_text(color = "#fff"),
+    axis.title = element_text(color = "#66e2ff"),
+      panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+  # Minor grid lines, vertical (x)
+  panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  )
+```
+
+
+## Universities in the Vinnytsia | Number of Students 
+
+``` {r}
+ggplot(vin_unis, aes(x = reorder(school_abb, -application_budget_count), y = application_budget_count, fill = (school_abb == "VNTU"))) +
+  geom_col(width = 0.7, color = "#333", alpha = 0.85, show.legend = FALSE) +
+  scale_fill_manual(values = c(`TRUE` = "#44e350", `FALSE` = "#0099CC")) +
+  geom_text(aes(label = application_budget_count), vjust = -1, size = 6, color = "yellow") +
+  scale_y_continuous(
+    breaks = seq(0,8000,3000),
+    limits = c(0, 8000)
+  ) +
+  labs(
+    title = "Universities in Vinnytsia by Budget Applications",
+    x = "University (abbr.)",
+    y = "Number of Budget Applications"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    plot.background = element_rect(fill = "#181818"),
+    panel.background = element_rect(fill = "#181818"),
+    plot.title = element_text(color = "white"),
+    axis.text = element_text(color = "#fff"),
+    axis.title = element_text(color = "#66e2ff"),
+      panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+  # Minor grid lines, vertical (x)
+  panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  )
+```
+
+
+
+## Universities in the Vinnytsia | Average score
+
+``` {r}
+ggplot(vin_unis, aes(x = reorder(school_abb, -score_mean), y = score_mean, fill = (school_abb == "VNTU"))) +
+  geom_col(width = 0.65, color = "#121212", alpha = 0.88, show.legend = FALSE) +
+  scale_fill_manual(values = c(`TRUE` = "#44e350", `FALSE` = "#0099CC")) +
+  geom_text(aes(label = round(score_mean, 1)), vjust = 1.4, size = 6, color = "yellow", fontface = "bold") +
+  scale_y_continuous(
+    breaks = seq(0, 200, 30),
+    limits = c(0, 200)
+  ) +
+  labs(
+    title = "Universities in Vinnytsia by Average Admission Score",
+    x = "University (abbr.)",
+    y = "Average Score (higher is better)"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    plot.background = element_rect(fill = "#181818"),
+    panel.background = element_rect(fill = "#181818"),
+    plot.title = element_text(color = "white"),
+    axis.text = element_text(color = "#fff"),
+    axis.title = element_text(color = "#66e2ff"),
+      panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+  # Minor grid lines, vertical (x)
+  panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  )
+```
+
+
+# In Odesa
+
+## Universities in the Odesa | EuroOsvita
+
+``` {r}
+odesa_unis <- ds3 %>% 
+  filter(oblast == "Odesa", !is.na(rank_2024)) %>%
+  arrange(rank_2024) %>%
+  mutate(
+    school_abb = if_else(
+      school_abb == "ONMU" & duplicated(school_abb), 
+      "ONMU1", 
+      school_abb
+    )
+  )
+
+ggplot(odesa_unis, aes(x = reorder(school_abb, rank_2024), y = rank_2024, fill = (school_abb == "NUOPL"))) +
+  geom_col(width = 0.65, color = "#121212", alpha = 0.88, show.legend = FALSE) +
+  scale_fill_manual(values = c(`TRUE` = "#ffb347", `FALSE` = "#0099CC")) +
+  geom_text(aes(label = rank_2024), vjust = 1.3, size = 6, color = "yellow", fontface = "bold") +
+  scale_y_reverse(
+    breaks = seq(0, 210, 40),
+    limits = c(210,0)
+  ) +
+  labs(
+    title = "Universities in Odesa by Total Rank (2024)",
+    x = "University (abbr.)",
+    y = "Rank (lower is better)"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    plot.background = element_rect(fill = "#181818"),
+    panel.background = element_rect(fill = "#181818"),
+    plot.title = element_text(color = "white"),
+    axis.text = element_text(color = "#fff"),
+     axis.text.x = element_text(size = 10),  
+    axis.title = element_text(color = "#66e2ff"),
+      panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+  # Minor grid lines, vertical (x)
+  panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  )
+```
+
+## Universities in the Odesa | Number of Students 
+
+``` {r}
+ggplot(odesa_unis, aes(x = reorder(school_abb, -application_budget_count), y = application_budget_count, fill = (school_abb == "NUOPL"))) +
+  geom_col(width = 0.7, color = "#333", alpha = 0.85, show.legend = FALSE) +
+  scale_fill_manual(values = c(`TRUE` = "#ffb347", `FALSE` = "#0099CC")) +
+  geom_text(aes(label = application_budget_count), vjust = -0.3, size = 4, color = "yellow") +
+  scale_y_continuous(
+    breaks = seq(0, 8000, 3000),
+    limits = c(0, 8000)
+  ) +
+  labs(
+    title = "Universities in Odesa by Budget Applications",
+    x = "University (abbr.)",
+    y = "Number of Budget Applications"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    plot.background = element_rect(fill = "#181818"),
+    panel.background = element_rect(fill = "#181818"),
+    plot.title = element_text(color = "white"),
+    axis.text = element_text(color = "#fff"),
+         axis.text.x = element_text(size = 10),  
+    axis.title = element_text(color = "#66e2ff"),
+      panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+  # Minor grid lines, vertical (x)
+  panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  )
+```
+
+## Universities in the Odesa | Average score
+
+``` {r}
+library(scales) # for alpha
+
+odesa_unis <- odesa_unis %>%
+  mutate(
+    label_col = if_else(school_abb == "NUOPL", "darkblue", "yellow")
+  )
+
+ggplot(odesa_unis, aes(x = reorder(school_abb, -score_mean), y = score_mean, fill = (school_abb == "NUOPL"))) +
+  geom_col(
+    width = 0.65,
+    color = scales::alpha("#121212", 0.3),
+    alpha = 0.88, show.legend = FALSE
+  ) +
+  scale_fill_manual(values = c(`TRUE` = "#ffb347", `FALSE` = "#0099CC")) +
+  geom_text(
+    aes(label = round(score_mean, 1), color = label_col),
+    vjust = 1.4, size = 4, fontface = "bold", show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_y_continuous(
+    breaks = seq(0, 200, 30),
+    limits = c(0, 200)
+  ) +
+  labs(
+    title = "Universities in Odesa by Average Admission Score",
+    x = "University (abbr.)",
+    y = "Average Score (higher is better)"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+  plot.background = element_rect(fill = "#181818"),
+  panel.background = element_rect(fill = "#181818"),
+  plot.title = element_text(color = "white"),
+  axis.text = element_text(color = "#fff"),
+  axis.text.x = element_text(size = 10),
+  axis.title = element_text(color = "#66e2ff"),
+  # Minor grid lines, horizontal (y)
+  panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+  # Minor grid lines, vertical (x)
+  panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+)
+
+```
+
+
+
+
+
+# In Dnipro
+
+## Universities in the Dnipropetrovsk | EuroOsvita
+
+``` {r}
+dnipro_unis <- ds3 %>% filter(oblast == "Dnipropetrovsk", !is.na(rank_2024)) %>%
+  arrange(rank_2024)
+ggplot(dnipro_unis, aes(x = reorder(school_abb, rank_2024), y = rank_2024, fill = (school_abb == "NTUDP"))) +
+  geom_col(width = 0.65, color = "#121212", alpha = 0.88, show.legend = FALSE) +
+  scale_fill_manual(values = c(`TRUE` = "purple", `FALSE` = "#0099CC")) +
+  geom_text(aes(label = rank_2024), vjust = 1.7, size = 6, color = "yellow", fontface = "bold") +
+  scale_y_reverse(
+    breaks = seq(0, 210, 40),
+    limits = c(210, 0)
+  ) +
+  labs(
+    title = "Universities in Dnipro by Total Rank (2024)",
+    x = "University (abbr.)",
+    y = "Rank (lower is better)"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    plot.background = element_rect(fill = "#181818"),
+    panel.background = element_rect(fill = "#181818"),
+    plot.title = element_text(color = "white"),
+    axis.text = element_text(color = "#fff"),
+    axis.title = element_text(color = "#66e2ff"),
+      axis.text.x = element_text(size = 10),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  )
+```
+
+
+
+
+## Universities in the Dnipropetrovsk | Number of Students
+
+``` {r}
+ggplot(dnipro_unis, aes(x = reorder(school_abb, -application_budget_count), y = application_budget_count, fill = (school_abb == "NTUDP"))) +
+  geom_col(width = 0.7, color = "#333", alpha = 0.85, show.legend = FALSE) +
+  scale_fill_manual(values = c(`TRUE` = "purple", `FALSE` = "#0099CC")) +
+  geom_text(aes(label = application_budget_count), vjust = -0.5, size = 5, color = "yellow") +
+  scale_y_continuous(
+    breaks = seq(0, 8000, 3000),
+    limits = c(0, 8000)
+  ) +
+  labs(
+    title = "Universities in Dnipro by Budget Applications",
+    x = "University (abbr.)",
+    y = "Number of Budget Applications"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    plot.background = element_rect(fill = "#181818"),
+    panel.background = element_rect(fill = "#181818"),
+    plot.title = element_text(color = "white"),
+    axis.text = element_text(color = "#fff"),
+    axis.text.x = element_text(size = 10),
+    axis.title = element_text(color = "#66e2ff"),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  )
+```
+
+
+## Universities in the Dnipropetrovsk | Average Score
+
+``` {r}
+library(scales) # for alpha
+
+dnipro_unis <- dnipro_unis %>%
+  mutate(
+    label_col = if_else(school_abb == "NTUDP", "yellow", "yellow")
+  )
+
+ggplot(dnipro_unis, aes(x = reorder(school_abb, -score_mean), y = score_mean, fill = (school_abb == "NTUDP"))) +
+  geom_col(
+    width = 0.65,
+    color = scales::alpha("#121212", 0.3),
+    alpha = 0.88, show.legend = FALSE
+  ) +
+  scale_fill_manual(values = c(`TRUE` = "purple", `FALSE` = "#0099CC")) +
+  geom_text(
+    aes(label = round(score_mean, 1), color = label_col),
+    vjust = 1.4, size = 4, fontface = "bold", show.legend = FALSE
+  ) +
+  scale_color_identity() +
+  scale_y_continuous(
+    breaks = seq(0, 200, 30),
+    limits = c(0, 200)
+  ) +
+  labs(
+    title = "Universities in Dnipro by Average Admission Score",
+    x = "University (abbr.)",
+    y = "Average Score (higher is better)"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    plot.background = element_rect(fill = "#181818"),
+    panel.background = element_rect(fill = "#181818"),
+    plot.title = element_text(color = "white"),
+    axis.text = element_text(color = "#fff"),
+    axis.text.x = element_text(size = 10),
+    axis.title = element_text(color = "#66e2ff"),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  )
+```
+
+# 4 | International Attitude 
+
+## What is it? 
+
+The last thing that can insure you to apply is the international attitude. We are going to compare universities by different international ranks (that are already included in the main "National Rank").
+
+We are comparing according to:
+
+- <span class="fragment" style="color:#5CFF6A; font-weight:bold;">Scopus Rank</span>
+- <span class="fragment" style="color:#5CFF6A; font-weight:bold;">QS Rank</span>
+- <span class="fragment" style="color:#5CFF6A; font-weight:bold;">Webometrics Rank</span>
+- <span class="fragment" style="color:#5CFF6A; font-weight:bold;">THE World University Ranking</span>
+- <span class="fragment" style="color:#5CFF6A; font-weight:bold;">QS Sustainability Ranking</span>
+
+
+## Scopus Rank
+
+``` {r}
+library(dplyr)
+library(ggplot2)
+library(scales) # for alpha
+
+guest_abbs <- c("KPI", "KNUTS", "LKPI", "VNTU", "NTUDP", "NUOPL")
+d1 <- ds3 %>% filter(school_abb %in% guest_abbs)
+
+d1 <- d1 %>%
+  mutate(
+    group = case_when(
+      school_abb == "VNTU" ~ "VNTU",
+      school_abb == "NTUDP" ~ "NTUDP",
+      school_abb == "NUOPL" ~ "Local",
+      TRUE ~ "Top"
+    ),
+    fill_col = case_when(
+      school_abb == "VNTU" ~ "#FFEB3B",    # yellow
+      school_abb == "NTUDP" ~ "#9b59b6",   # purple
+      group == "Local" ~ "#44e350",        # green for NUOPL
+      TRUE ~ "#00B8D9"                     # blue for Top
+    ),
+    border_col = if_else(group == "Top", "#BDBDBD", "#222")
+  )
+
+ggplot(d1, aes(x = school_abb, y = scopus_rank)) +
+  # VNTU
+  geom_point(data = filter(d1, school_abb == "VNTU"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  # NTUDP (purple)
+  geom_point(data = filter(d1, school_abb == "NTUDP"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  # NUOPL (green)
+  geom_point(data = filter(d1, school_abb == "NUOPL"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  # Top universities (blue)
+  geom_point(data = filter(d1, group == "Top"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  scale_fill_identity() +
+  scale_color_identity() +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -2.5, color = "#FFF") +
+  labs(
+    x = "University ",
+    y = "Scopus Rank (Lower = Better)",
+    title = "Scopus Ranking (Locals vs Top)"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    plot.background = element_rect(fill = "#181818", color = NA),
+    panel.background = element_rect(fill = "#181818", color = NA),
+    plot.title = element_text(color = "white"),
+    axis.text = element_text(color = "#fff"),
+    axis.title = element_text(color = "#66e2ff"),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  )
+```
+
+
+
+## Qs Rank
+``` {r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+
+guest_abbs <- c("KPI", "KNUTS", "LKPI", "VNTU", "NTUDP", "NUOPL")
+d1 <- ds3 %>% filter(school_abb %in% guest_abbs) %>%
+  mutate(
+    group = case_when(
+      school_abb == "VNTU" ~ "VNTU",
+      school_abb == "NTUDP" ~ "NTUDP",
+      school_abb == "NUOPL" ~ "Local",
+      TRUE ~ "Top"
+    ),
+    fill_col = case_when(
+      school_abb == "VNTU" ~ "#FFEB3B",    # yellow
+      school_abb == "NTUDP" ~ "#9b59b6",   # purple
+      group == "Local" ~ "#44e350",        # green for NUOPL
+      TRUE ~ "#00B8D9"                     # blue for Top
+    ),
+    border_col = if_else(group == "Top", "#BDBDBD", "#222")
+  )
+
+ggplot(d1, aes(x = school_abb, y = qs_rank)) +
+  geom_point(data = filter(d1, school_abb == "VNTU"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  geom_point(data = filter(d1, school_abb == "NTUDP"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  geom_point(data = filter(d1, school_abb == "NUOPL"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  geom_point(data = filter(d1, group == "Top"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  scale_fill_identity() +
+  scale_color_identity() +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -0.5, color = "#FFF") +
+  labs(
+    x = "University",
+    y = "QS Rank",
+    title = "QS Ranking (Locals vs Top)"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    plot.background = element_rect(fill = "#181818", color = NA),
+    panel.background = element_rect(fill = "#181818", color = NA),
+    plot.title = element_text(color = "white"),
+    axis.text = element_text(color = "#fff"),
+    axis.title = element_text(color = "#66e2ff"),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  )
+```
+
+## Webometrics Rank
+
+``` {r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+
+guest_abbs <- c("KPI", "KNUTS", "LKPI", "VNTU", "NTUDP", "NUOPL")
+d1 <- ds3 %>% filter(school_abb %in% guest_abbs) %>%
+  mutate(
+    group = case_when(
+      school_abb == "VNTU" ~ "VNTU",
+      school_abb == "NTUDP" ~ "NTUDP",
+      school_abb == "NUOPL" ~ "Local",
+      TRUE ~ "Top"
+    ),
+    fill_col = case_when(
+      school_abb == "VNTU" ~ "#FFEB3B",    # yellow
+      school_abb == "NTUDP" ~ "#9b59b6",   # purple
+      group == "Local" ~ "#44e350",        # green for NUOPL
+      TRUE ~ "#00B8D9"                     # blue for Top
+    ),
+    border_col = if_else(group == "Top", "#BDBDBD", "#222")
+  )
+
+ggplot(d1, aes(x = school_abb, y = webometrics_rank)) +
+  geom_point(data = filter(d1, school_abb == "VNTU"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  geom_point(data = filter(d1, school_abb == "NTUDP"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  geom_point(data = filter(d1, school_abb == "NUOPL"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  geom_point(data = filter(d1, group == "Top"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  scale_fill_identity() +
+  scale_color_identity() +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -2.5, color = "#FFF") +
+  labs(
+    x = "University",
+    y = "Webometrics Rank",
+    title = "Webometrics Ranking (Locals vs Top)"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    plot.background = element_rect(fill = "#181818", color = NA),
+    panel.background = element_rect(fill = "#181818", color = NA),
+    plot.title = element_text(color = "white"),
+    axis.text = element_text(color = "#fff"),
+    axis.title = element_text(color = "#66e2ff"),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  )
+```
+
+## The World University Ranking 
+``` {r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+
+guest_abbs <- c("KPI", "KNUTS", "LKPI", "VNTU", "NTUDP", "NUOPL")
+d1 <- ds3 %>% filter(school_abb %in% guest_abbs) %>%
+  mutate(
+    group = case_when(
+      school_abb == "VNTU" ~ "VNTU",
+      school_abb == "NTUDP" ~ "NTUDP",
+      school_abb == "NUOPL" ~ "Local",
+      TRUE ~ "Top"
+    ),
+    fill_col = case_when(
+      school_abb == "VNTU" ~ "#FFEB3B",    # yellow
+      school_abb == "NTUDP" ~ "#9b59b6",   # purple
+      group == "Local" ~ "#44e350",        # green for NUOPL
+      TRUE ~ "#00B8D9"                     # blue for Top
+    ),
+    border_col = if_else(group == "Top", "#BDBDBD", "#222")
+  )
+
+ggplot(d1, aes(x = school_abb, y = wur_rank)) +
+  geom_point(data = filter(d1, school_abb == "VNTU"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  geom_point(data = filter(d1, school_abb == "NTUDP"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  geom_point(data = filter(d1, school_abb == "NUOPL"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  geom_point(data = filter(d1, group == "Top"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  scale_fill_identity() +
+  scale_color_identity() +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -0.5, color = "#FFF") +
+  labs(
+    x = "University",
+    y = "THE Rank",
+    title = "Times Higher Education Ranking (Locals vs Top)"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    plot.background = element_rect(fill = "#181818", color = NA),
+    panel.background = element_rect(fill = "#181818", color = NA),
+    plot.title = element_text(color = "white"),
+    axis.text = element_text(color = "#fff"),
+    axis.title = element_text(color = "#66e2ff"),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  )
+```
+
+## QS Sustainability Ranking
+
+``` {r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+
+guest_abbs <- c("KPI", "KNUTS", "LKPI", "VNTU", "NTUDP", "NUOPL")
+d1 <- ds3 %>% filter(school_abb %in% guest_abbs) %>%
+  mutate(
+    group = case_when(
+      school_abb == "VNTU" ~ "VNTU",
+      school_abb == "NTUDP" ~ "NTUDP",
+      school_abb == "NUOPL" ~ "Local",
+      TRUE ~ "Top"
+    ),
+    fill_col = case_when(
+      school_abb == "VNTU" ~ "#FFEB3B",    # yellow
+      school_abb == "NTUDP" ~ "#9b59b6",   # purple
+      group == "Local" ~ "#44e350",        # green for NUOPL
+      TRUE ~ "#00B8D9"                     # blue for Top
+    ),
+    border_col = if_else(group == "Top", "#BDBDBD", "#222")
+  )
+
+ggplot(d1, aes(x = school_abb, y = qswur_rank)) +
+  geom_point(data = filter(d1, school_abb == "VNTU"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  geom_point(data = filter(d1, school_abb == "NTUDP"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  geom_point(data = filter(d1, school_abb == "NUOPL"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  geom_point(data = filter(d1, group == "Top"),
+             aes(fill = fill_col, color = border_col),
+             size = 6, shape = 21, alpha = 0.95, show.legend = FALSE) +
+  scale_fill_identity() +
+  scale_color_identity() +
+  scale_y_reverse() +
+  geom_text(aes(label = school_abb), fontface = "bold", size = 5, nudge_y = -0.5, color = "#FFF") +
+  labs(
+    x = "University",
+    y = "QS Sustainability",
+    title = "QS Sustainability Ranking (Locals vs Top)"
+  ) +
+  theme_minimal(base_size = 18) +
+  theme(
+    plot.background = element_rect(fill = "#181818", color = NA),
+    panel.background = element_rect(fill = "#181818", color = NA),
+    plot.title = element_text(color = "white"),
+    axis.text = element_text(color = "#fff"),
+    axis.title = element_text(color = "#66e2ff"),
+    panel.grid.minor.y = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.minor.x = element_line(color = scales::alpha("white", 0.2), size = 0.5),
+    panel.grid.major.x = element_line(color = scales::alpha("white", 0.3), size = 0.7)
+  )
+```
+
+
+# Summary
+
+Honestly, it is so hard to choose one university. This is a very important decision in your life that will determine the next 4–5 years of your life, your future friends, and possibly your whole future career. It sounds very serious, doesn’t it?
+
+The author of this presentation advises all students who don’t know which university to choose: you have already seen all the advantages and disadvantages, all the info about locations, rankings, and other analytics—<span class="fragment" style="color:#5CFF6A; font-weight:bold;">so just choose how you feel/</span>
